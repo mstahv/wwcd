@@ -16,10 +16,9 @@ public class SelectionAPIView extends AbstractThing {
 
     public SelectionAPIView() {
         add(md("""
-                The *Selection API* in browsers have a pretty advanced API available for inspecting and modifying text at the cursor point or 
-                "selection". In this view we are utilizing that with a Java API in a Vaadin app.
-                
-                 * Example: TODO copy here from add-on demo
+                The *Selection API* in browsers have a pretty advanced API available for inspecting and modifying text 
+                at the cursor point or "selection". In this view we are utilizing that via a Java API in a Vaadin app
+                (available as an add-on).
                 
                 """));
 

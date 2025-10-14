@@ -24,7 +24,7 @@ public class WebAuthnView extends AbstractThing {
                 * Your OS system typically safeguards passkeys with fingerprint or facial recognition (among other 
                   possibilities)
                 
-                TODO article and demo links
+                [Try a separate example](https://webauthn.dokku1.parttio.org/login).
                 """));
     }
 }
