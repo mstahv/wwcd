@@ -37,7 +37,7 @@ public class VotingLeaderboardView extends AbstractView {
 
     public VotingLeaderboardView(AppContext appContext, AdminSession adminSession) {
         this.appContext = appContext;
-        add(new Emphasis("Vote, vote, vote!"));
+        add(new Emphasis("Vote, vote, vote! Open w.virit.in"));
         addAndExpand(grid);
         calculateVotes();
         this.ui = UI.getCurrent();

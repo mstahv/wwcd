@@ -20,8 +20,6 @@ public class LobbyView extends AbstractView {
                 
                 **App is in "presentation mode". All demos will (re-)open after the session. Wait for the presenter to begin...**
                 
-                You can prepare for voting the agenda at [wwcd.virit.in](https://wwcd.virit.in/)
-                
                 """));
 
         if(adminSession.isAdmin()) {

@@ -23,7 +23,7 @@ public class IntroView extends AbstractView {
                 
                 **App is in "presentation mode". All demos will (re-)open after the session. Wait for the presenter to begin...**
                 
-                You can prepare for voting the agenda at [wwcd.virit.in](https://wwcd.virit.in/)
+                You can prepare for voting the agenda by opening [w.virit.in](https://w.virit.in/)
                 
                 """));
 

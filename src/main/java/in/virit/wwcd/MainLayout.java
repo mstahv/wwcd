@@ -9,6 +9,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
@@ -80,7 +81,14 @@ public class MainLayout extends org.vaadin.firitin.appframework.MainLayout {
 
     @Override
     protected Object getDrawerHeader() {
-        return "WWCD }> " + getLayoutId();
+        return new Image("icons/icon-line.png", "WWCD") {{
+            setHeight("3em");
+            getStyle().setDisplay(Style.Display.BLOCK);
+            getStyle().setMarginLeft("auto");
+            getStyle().setMarginRight("auto");
+            getStyle().setMarginTop("2em");
+            getStyle().setMarginBottom("1em");
+        }};
     }
 
     @Override
@@ -101,12 +109,10 @@ public class MainLayout extends org.vaadin.firitin.appframework.MainLayout {
     @Override
     protected void afterNavigation() {
         super.afterNavigation();
-        System.out.println(getLayoutId() + " After navigation, presentation mode: " + appContext.isPresentation() + " admin: " + adminSession.isAdmin());
         adjustNavigation();
     }
 
     private void adjustNavigation() {
-        System.out.println(getLayoutId() + " Adjust navigation, presentation mode: " + appContext.isPresentation() + " admin: " + adminSession.isAdmin());
         if (appContext.isPresentation()) {
             getMenuScroller().setContent(presentationDisplay);
             if (appContext.getStartOfPresentation() != null) {
