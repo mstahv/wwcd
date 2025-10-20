@@ -1,17 +1,20 @@
 package in.virit.wwcd.demoviews;
 
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.router.Route;
 import in.virit.wwcd.MainLayout;
-import in.virit.wwcd.session.UISession;
 import org.vaadin.firitin.appframework.MenuItem;
+import org.vaadin.firitin.devicemotion.DeviceMotion;
+import org.vaadin.firitin.devicemotion.DeviceMotionEvent;
+import org.vaadin.firitin.rad.PrettyPrinter;
 
 @Route(layout = MainLayout.class)
 @MenuItem(title = "Device motion and position", icon = VaadinIcon.COFFEE)
 public class DeviceMotionView extends AbstractThing {
 
-    public DeviceMotionView(MultiplayerPuckGame multiplayerPuckGame) {
+    public DeviceMotionView() {
         add(md("""
                 Device motion and position API's are available in modern browsers, but often relevant only in mobile
                 devices/apps. The device motion API is bit related to Geolocation APIs, but in a different
@@ -19,7 +22,25 @@ public class DeviceMotionView extends AbstractThing {
                 combined. Solutions can be creative, from helping navigation (auto-rotate map), to custom input solutions
                 or games.
                 
+                Try separate [Puck "Game"](https://puck.dokku1.parttio.org/) or read boring numbers below! Note, you'll need a device with relevant sensors
+                (most modern phones/tablets should have them).
+                
+                Below is a "number dump" on supported devices.
                 """));
-        add(multiplayerPuckGame);
+
+        Div details = new Div();
+        add(details);
+
+        DeviceMotion.listen(new DeviceMotion.MotionListener() {
+            @Override
+            public void deviceMotionUpdate(DeviceMotionEvent deviceMotionEvent) {
+                details.removeAll();
+                details.add(new H5("Acceleration"));
+                details.add(PrettyPrinter.toVaadin(deviceMotionEvent.getAcceleration()));
+                details.add(new H5("Rotation"));
+                details.add(PrettyPrinter.toVaadin(deviceMotionEvent.getRotationRate()));
+            }
+        });
+
     }
 }

@@ -2,12 +2,12 @@ package in.virit.wwcd;
 
 import com.vaadin.flow.component.Component;
 import in.virit.wwcd.demoviews.AccessOtherHardwareView;
-import in.virit.wwcd.demoviews.ClipboarAPIView;
+import in.virit.wwcd.demoviews.ClipboardAPIView;
 import in.virit.wwcd.demoviews.GeolocationView;
 import in.virit.wwcd.demoviews.PreventAutomaticScreenLockView;
 
 public enum Demo {
-    Clipboard(ClipboarAPIView.class),
+    Clipboard(ClipboardAPIView.class),
     HardwareAccess(AccessOtherHardwareView.class, true),
     DeviceMotion(in.virit.wwcd.demoviews.DeviceMotionView.class),
     ExecutingRealProgrammingLanguages("Executing real programming languages", in.virit.wwcd.demoviews.ExecuteJavaInTheBrowserView.class),

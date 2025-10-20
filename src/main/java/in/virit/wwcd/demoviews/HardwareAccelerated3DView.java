@@ -11,7 +11,7 @@ import org.vaadin.firitin.appframework.MainLayout;
 import org.vaadin.firitin.appframework.MenuItem;
 import org.vaadin.firitin.components.button.VButton;
 
-@MenuItem(title = "WebGL Hardware accelerated 3D graphics", icon = VaadinIcon.CUBE)
+@MenuItem(title = "3D graphics", icon = VaadinIcon.CUBE)
 @Route(layout = MainLayout.class)
 public class HardwareAccelerated3DView extends AbstractThing {
 
@@ -32,12 +32,12 @@ public class HardwareAccelerated3DView extends AbstractThing {
 
         var map = new FrankfurtMapLibreGLExample();
 
-        findAncestor(MainLayout.class).addNavbarHelper(
+        addNavbarHelper(
                 new VButton(VaadinIcon.GLOBE, e -> {
                     map.setProjection(Projection.GLOBE); // world is round, on smaller zoom levels :-)
                 }));
-        findAncestor(MainLayout.class).addNavbarHelper(
-                new VButton("Fly to Frankfurt", e -> {
+        addNavbarHelper(
+                new VButton(VaadinIcon.AIRPLANE, e -> {
                     map.flyTo(new FlyToOptions() {{
                         setCenter(new LngLat(8.6778088, 50.1153228));
                         setZoom(16.0);

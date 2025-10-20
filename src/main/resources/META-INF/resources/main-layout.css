@@ -3,3 +3,12 @@ footer {
     text-align: center;
     font-style: italic;
 }
+
+vaadin-app-layout[overlay] {
+}
+
+vaadin-app-layout {
+  h2[slot="navbar-bottom"] {
+        font-size: var(--lumo-font-size-m);
+  }
+}
