@@ -1,6 +1,9 @@
 package in.virit.wwcd.demoviews;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.Route;
 import org.vaadin.firitin.appframework.MainLayout;
 import org.vaadin.firitin.appframework.MenuItem;
@@ -18,8 +21,22 @@ public class InstallingView extends AbstractThing {
                 
                 Vaadin developers are priviliged to have a built-in PWA support for their apps via a single
                 `@PWA` annotation. See more from [Vaadin PWA documentation](https://vaadin.com/docs/latest/flow/pwa/overview).
-                
-                TODO video about installing and running as standalone app on a mobile device.
                 """));
+
+        add(new HomeScreenVideo());
+
+    }
+
+    @Tag("video")
+    static class HomeScreenVideo extends Component {
+        HomeScreenVideo() {
+            getElement().setAttribute("controls", "");
+            getElement().setAttribute("loop", "");
+            getStyle().setMaxHeight("50vh");
+            Element source = new Element("source");
+            source.setAttribute("src", "/photos/adding-to-homescreen.mov");
+            source.setAttribute("type", "video/mp4");
+            getElement().appendChild(source);
+        }
     }
 }
