@@ -19,15 +19,15 @@ public class ScreenOrientationView extends AbstractThing {
     public ScreenOrientationView() {
         setSizeFull();
         add(md("""
-                Web apps can detect the orientation of the screen and to some extend lock it. This sometimes handy on
-                various handheld devices or with weird window size on desktop browsers, when optimizing the UX.
-                
+                Web apps can detect the orientation of the screen and to some extent lock it. This is sometimes handy on
+                various handheld devices or with weird window sizes on desktop browsers, when optimizing the UX.
+
                 * Detection can happen via [ScreenOrientation API](https://developer.mozilla.org/en-US/docs/Web/API/ScreenOrientation), [Screen API](https://developer.mozilla.org/en-US/docs/Web/API/Screen) or using [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver).
                 * Locking orientation (to dev specific position) works via [ScreenOrientation API](https://developer.mozilla.org/en-US/docs/Web/API/ScreenOrientation/lock) - on Android devices.
-                * Workarounds for locking on Apple devices: CSS rotate against mediaqueries (mediocre results), hint the user
+                * Workarounds for locking on Apple devices: CSS rotate against media queries (mediocre results), hint the user
                   about optimal orientation: *This video is horizontal, please rotate your screen...*
-                
-                This demo reports the size and small visualization of the view using ResizeObserver. I find this most flexible approach as it can observe any visible element 
+
+                This demo reports the size and small visualization of the view using ResizeObserver. I find this the most flexible approach as it can observe any visible element
                 size (not just screen or window size). Used via helper in Viritin add-on.
                 """));
 

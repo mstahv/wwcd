@@ -16,15 +16,15 @@ public class DeviceMotionView extends AbstractThing {
 
     public DeviceMotionView() {
         add(md("""
-                Device motion and position API's are available in modern browsers, but often relevant only in mobile
-                devices/apps. The device motion API is bit related to Geolocation APIs, but in a different
-                "scale" and powered by different sensors (gyroscope, accelometer, compass). In some cases they can be
+                Device motion and position APIs are available in modern browsers, but often relevant only in mobile
+                devices/apps. The device motion API is a bit related to Geolocation APIs, but in a different
+                "scale" and powered by different sensors (gyroscope, accelerometer, compass). In some cases they can be
                 combined. Solutions can be creative, from helping navigation (auto-rotate map), to custom input solutions
                 or games.
-                
+
                 Try separate [Puck "Game"](https://puck.dokku1.parttio.org/) or read boring numbers below! Note, you'll need a device with relevant sensors
                 (most modern phones/tablets should have them).
-                
+
                 Below is a "number dump" on supported devices.
                 """));
 

@@ -37,9 +37,9 @@ public class GeolocationView extends AbstractThing {
 
     public GeolocationView() {
         add(md("""
-                One of the oldest "hardware integrations" to web, and probably nothing new, but my old time favourite.
-                At least it is good to remind that all this can accomplished using Vaadin with *100% pure Java*.
-                Also, there is more than just lat-longs available especially if on GPS (~ mobile devices)!
+                One of the oldest "hardware integrations" to web, and probably nothing new, but my old-time favourite.
+                At least it is good to remind that all this can be accomplished using Vaadin with *100% pure Java*.
+                Also, there is more than just lat-longs available, especially if on GPS (~ mobile devices)!
                 Solutions utilizing geolocation data can sometimes also benefit from data coming via [device motion API](devicemotion).
                 """));
         add(rawDataDisplay);

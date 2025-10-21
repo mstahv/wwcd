@@ -14,7 +14,7 @@ public enum Demo {
     Fullscreen("Fullscreen API", in.virit.wwcd.demoviews.FullscreenView.class),
     Geolocation(GeolocationView.class),
     Graphics(in.virit.wwcd.demoviews.GraphicsView.class),
-    HardwareAccelerated3DGraphics(in.virit.wwcd.demoviews.HardwareAccelerated3DView.class),
+    HardwareAccelerated3DGraphics("Hardware accelerated 3D graphics", in.virit.wwcd.demoviews.HardwareAccelerated3DView.class),
     Notifications(in.virit.wwcd.demoviews.NotificationsView.class),
     PageVisibility(in.virit.wwcd.demoviews.PageVisibilityView.class, true),
     PreventAutomaticScreenLock(PreventAutomaticScreenLockView.class),

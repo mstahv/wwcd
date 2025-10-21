@@ -60,9 +60,9 @@ public class ClipboardAPIView extends AbstractThing {
                 add(grid);
             }
         }) {{
-            setText("Handle clipbooard value");
+            setText("Handle clipboard value");
             addClickListener(event -> {
-                Notification.show("Your clipboard value was requested and copied to the text area above. Browser" +
+                Notification.show("Your clipboard value was requested and copied to the text area above. Browser " +
                         "might have requested a permission or showed a native menu with 'Paste' option.");
             });
         }});

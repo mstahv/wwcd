@@ -17,14 +17,14 @@ public class FullscreenView extends AbstractThing {
         add(md("""
                 The [Fullscreen API](https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API) provides an easy way to present web content using the user's entire screen.
                 This can be useful for web applications such as games or video players, where maximizing the available
-                screen space can enhance the user experience. Some mobile browser have limited the API for functionality,
-                but on desktop it works well accorss the browser. On mobile apps, if fullscreen is desired, consider
+                screen space can enhance the user experience. Some mobile browsers have limited the API functionality,
+                but on desktop it works well across browsers. On mobile apps, if fullscreen is desired, consider
                 using the PWA mode, which launches the app in a standalone window without the browser "chrome".
-                
+
                  * The JS API is "trivial", but "interesting things" can happen with SPAs like Vaadin. For Vaadin,
-                   you can try for example the [Viritin add-on](https://vaadin.com/directory/component/flow-viritin), 
+                   you can try for example the [Viritin add-on](https://vaadin.com/directory/component/flow-viritin),
                    which provides a simple Java API for the Fullscreen browser API and a couple of workarounds for the "surprises".
-                 * Test this apps fullscreen mode by clicking the button in the menu.
+                 * Test this app's fullscreen mode by clicking the button in the menu.
                  * Or click/tap the photo below (makes the photo fullscreen).
                 """));
 

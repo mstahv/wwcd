@@ -22,13 +22,13 @@ public class NotificationsView extends AbstractThing {
 
     public NotificationsView() {
         add(md("""
-                There is three main categories for showing notifications for your users.
-                
+                There are three main categories for showing notifications to your users.
+
                 * Show them within your web app with pure web tech. Extremely flexible, but useless if your web app is
                   not open.
                 * Use operating system provided service via Web Notifications API
                 * Ship them even if window and browser is closed with Web Push Notifications API.
-                
+
                 [Article comparing these approaches.](https://vaadin.com/blog/which-notifications-are-best-for-your-java-app-web-vaadin-or-push)
                 """));
 

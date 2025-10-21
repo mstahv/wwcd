@@ -26,11 +26,11 @@ public class GraphicsView extends AbstractThing {
     public GraphicsView() {
         add(md("""
                 For 2D vector graphics we(b) can use two approaches:
-                
+
                  * [Canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) - draw graphics with programmable API. Play [Tetris](https://tetris.demo.vaadin.com) (drawn with [Canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API), via [Java API](https://vaadin.com/directory/component/canvas-java)).
-                 * [SVG](https://developer.mozilla.org/en-US/docs/Web/SVG) - HTML but for vector graphics. DOM and styling support helps espcially with dynamic and interactive content.
-                
-                 As a Java develoeprs, we can extend that with JDK's Graphics2D, with some tiny hacks.
+                 * [SVG](https://developer.mozilla.org/en-US/docs/Web/SVG) - HTML but for vector graphics. DOM and styling support helps especially with dynamic and interactive content.
+
+                 As Java developers, we can extend that with JDK's Graphics2D, with some tiny hacks.
                 """));
 
         add(new H3("An SVG based Gauge widget (Java wrapper for a React component)"));

@@ -30,18 +30,23 @@ public class PageVisibilityView extends AbstractThing {
 
     private final ScheduledFuture<?> future;
     private final Registration registration;
-    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    static ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private PageVisibility.Visibility visibility;
     private boolean notificationsEnabled;
 
     public PageVisibilityView() {
         add(md("""
-                For rich UIs it can be surprisingly important to know if the user is actually looking at the page or if the 
-                page is in background tab. For example certain notifications can be totally lost if the user is not looking at the page
-                and should be displayed differently when user returns to the page. Also, there can be performance benefits
+                For rich UIs it can be surprisingly important to know if the user is actually looking at the page or if the
+                page is in a background tab. For example, certain notifications can be totally lost if the user is not looking at the page
+                and should be displayed differently when the user returns to the page. Also, there can be performance benefits,
                 for example pausing certain updates when the user is not actively looking at the page.
-                
-                Below, the log is updated every second, but only if the page is visible. Also, when the page visibility 
+
+                All modern browsers
+                support [Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API), but I have found out that sometimes one is better off by also tracking
+                if the page has focus in it (an open browser window reports visible, but can be behind another one).
+                PageVisibility helper class in Viritin add-on combines these into a single API.
+
+                Below, the log is updated every second, but only if the page is visible. Also, when the page visibility
                 changes. If notifications are enabled, a notification is shown when the visibility changes.
                 """));
 
