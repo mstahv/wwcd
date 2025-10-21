@@ -21,9 +21,11 @@ public class IntroView extends AbstractView {
                 web applications are constantly improving. In this demo/presentation we will look at some of the fresh
                 capabilities of the web platform, and how they can be utilized in modern web applications.
                 
-                **App is in "presentation mode". All demos will (re-)open after the session. Wait for the presenter to begin...**
+                **App is in "presentation mode". Voting starts soon. All demos will (re-)open after the session.**
                 
-                You can prepare for voting the agenda by opening [w.virit.in](https://w.virit.in/)
+                You  can prepare for voting the agenda by opening this page via [w.virit.in](https://w.virit.in/)
+                
+                ![QR Code](/photos/qrcode.png)
                 
                 """));
 

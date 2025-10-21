@@ -121,7 +121,7 @@ public class AppContext {
 
     public void present(UISession uiSession, AdminSession adminSession, String password) {
         String crypted = Crypt.crypt(password, cryptedPassword);
-        if(false && !crypted.equals(cryptedPassword)) { // TODO enable password check
+        if(!crypted.equals(cryptedPassword)) {
             Notification.show("Password did not match! If you want to use the hosted presentation mode, contact matti ät vaadin dot com").setPosition(Notification.Position.MIDDLE);
             return;
         }

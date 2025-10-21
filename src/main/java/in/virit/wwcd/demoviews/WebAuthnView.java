@@ -25,6 +25,8 @@ public class WebAuthnView extends AbstractThing {
                   possibilities)
                 
                 [Try a separate example](https://webauthn.dokku1.parttio.org/login).
+                
+                [Three methods to go passwordless](https://vaadin.com/blog/three-methods-to-go-passwordless)
                 """));
     }
 }
