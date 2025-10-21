@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a237e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#283593;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3949ab;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#e3f2fd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Glow filter for text -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Pattern for browser window -->
+    <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="1" fill="#ffffff" opacity="0.1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="400" fill="url(#bgGradient)"/>
+  <rect width="1200" height="400" fill="url(#dots)"/>
+
+  <!-- Decorative browser windows -->
+  <g opacity="0.15">
+    <rect x="50" y="50" width="280" height="180" rx="8" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <line x1="50" y1="80" x2="330" y2="80" stroke="#ffffff" stroke-width="2"/>
+    <circle cx="70" cy="65" r="5" fill="#ff5252"/>
+    <circle cx="90" cy="65" r="5" fill="#ffeb3b"/>
+    <circle cx="110" cy="65" r="5" fill="#4caf50"/>
+  </g>
+
+  <g opacity="0.15">
+    <rect x="870" y="170" width="280" height="180" rx="8" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <line x1="870" y1="200" x2="1150" y2="200" stroke="#ffffff" stroke-width="2"/>
+    <circle cx="890" cy="185" r="5" fill="#ff5252"/>
+    <circle cx="910" cy="185" r="5" fill="#ffeb3b"/>
+    <circle cx="930" cy="185" r="5" fill="#4caf50"/>
+  </g>
+
+  <!-- Main title -->
+  <text x="600" y="160" font-family="Arial, sans-serif" font-size="72" font-weight="bold"
+        fill="url(#textGradient)" text-anchor="middle" filter="url(#glow)">
+    What We(b) Can Do!
+  </text>
+
+  <!-- Subtitle -->
+  <text x="600" y="220" font-family="Arial, sans-serif" font-size="32" font-weight="300"
+        fill="#e3f2fd" text-anchor="middle" opacity="0.95">
+    Discover the Power of Modern Web
+  </text>
+
+  <!-- Decorative line -->
+  <line x1="400" y1="250" x2="800" y2="250" stroke="#64b5f6" stroke-width="3" opacity="0.6"/>
+
+  <!-- Bottom tagline -->
+  <text x="600" y="300" font-family="Arial, sans-serif" font-size="24" font-style="italic"
+        fill="#90caf9" text-anchor="middle" opacity="0.9">
+    Built with Java &amp; Vaadin
+  </text>
+
+  <!-- Decorative sparkles -->
+  <g opacity="0.8">
+    <circle cx="380" cy="140" r="3" fill="#ffeb3b">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="820" cy="160" r="2.5" fill="#ffeb3b">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="200" r="2" fill="#ffffff">
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="800" cy="210" r="2" fill="#ffffff">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="2.8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Code brackets decoration -->
+  <text x="340" y="165" font-family="monospace" font-size="48" fill="#42a5f5" opacity="0.4">&lt;</text>
+  <text x="830" y="165" font-family="monospace" font-size="48" fill="#42a5f5" opacity="0.4">/&gt;</text>
+</svg>

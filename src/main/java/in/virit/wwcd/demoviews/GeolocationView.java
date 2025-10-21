@@ -27,7 +27,7 @@ import org.vaadin.firitin.util.style.LumoProps;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Route(layout = in.virit.wwcd.MainLayout.class)
-@MenuItem(title = "Geolocation", icon = VaadinIcon.COFFEE)
+@MenuItem(title = "Geolocation", icon = VaadinIcon.GLOBE)
 public class GeolocationView extends AbstractThing {
 
     private final MapLibre map;

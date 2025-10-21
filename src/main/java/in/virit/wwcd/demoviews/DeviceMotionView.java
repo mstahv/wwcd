@@ -11,7 +11,7 @@ import org.vaadin.firitin.devicemotion.DeviceMotionEvent;
 import org.vaadin.firitin.rad.PrettyPrinter;
 
 @Route(layout = MainLayout.class)
-@MenuItem(title = "Device motion and position", icon = VaadinIcon.COFFEE)
+@MenuItem(title = "Device motion and position", icon = VaadinIcon.ROTATE_LEFT)
 public class DeviceMotionView extends AbstractThing {
 
     public DeviceMotionView() {

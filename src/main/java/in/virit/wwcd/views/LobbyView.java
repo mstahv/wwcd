@@ -1,5 +1,6 @@
 package in.virit.wwcd.views;
 
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -15,9 +16,10 @@ import org.vaadin.firitin.components.orderedlayout.VVerticalLayout;
 public class LobbyView extends AbstractView {
 
     public LobbyView(AdminSession adminSession, AppContext appContext) {
-        add(md("""
-                # What We(b) can do in 2025!?
-                
+        add(new Image("/photos/headline.svg", "What We(b) Can Do!"){{
+            setMaxWidth("100%");
+        }});
+        add(md("""                
                 **App is in "presentation mode". All demos will (re-)open after the session. Wait for the presenter to begin...**
                 
                 """));

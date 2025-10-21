@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@MenuItem(title = "Clipboard access", icon = VaadinIcon.COFFEE)
+@MenuItem(title = "Clipboard access", icon = VaadinIcon.CLIPBOARD)
 @Route(layout = MainLayout.class) // TODO fixme, why it doesn't work from parent class anymore!?
 public class ClipboardAPIView extends AbstractThing {
 

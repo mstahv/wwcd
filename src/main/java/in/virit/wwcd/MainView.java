@@ -1,5 +1,6 @@
 package in.virit.wwcd;
 
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -11,15 +12,23 @@ import org.vaadin.firitin.components.RichText;
 public class MainView extends VerticalLayout {
 
     public MainView() {
+        add(new Image("/photos/headline.svg", "What We(b) Can Do!"){{
+            setMaxWidth("100%");
+        }});
         add(new RichText().withMarkDown("""
-           # What We(b) Can Do!?
-           
-           Browsers and WWW in general keeps evolving. This example app contains a dozen (or so) of inspirational features that\s
-           you probably didn't even realize (or remember) to be possible. Many of the examples are demoed within the
-           example itself, with plain Java powerd by [Vaadin }>](https://vaadin.com/).
-           
-           🧸The app contains some "presentation features" for the demo, which might disable some features during
-            presentations 🧸
+           The web platform keeps evolving at an incredible pace, and modern browsers are far more capable than most developers realize.
+           This showcase application demonstrates over a dozen powerful features that might surprise you—capabilities you didn't know
+           existed or forgot were even possible.
+
+           **Each example runs live in your browser**, built entirely with Java and [Vaadin](https://vaadin.com/). No JavaScript required.
+           From hardware access to advanced graphics, from offline capabilities to biometric authentication—discover what's possible
+           when you combine the power of modern web APIs with the elegance of Java development.
+
+           **Ready to be amazed?** Explore the menu to see what we(b) can do!
+
+           ---
+
+           *🧸 Note: This app includes presentation features that may disable certain functionality during demos.*
            """));
     }
 }
