@@ -25,7 +25,7 @@ public class FullscreenView extends AbstractThing {
                    you can try for example the [Viritin add-on](https://vaadin.com/directory/component/flow-viritin),
                    which provides a simple Java API for the Fullscreen browser API and a couple of workarounds for the "surprises".
                  * Test this app's fullscreen mode by clicking the button in the menu.
-                 * Or click/tap the photo below (makes the photo fullscreen).
+                 * Or click/tap the photo below (makes the photo fullscreen). Note, iPhones don't support fullscreen!
                 """));
 
         add(new FullscreenImage("/photos/view.jpg"));
