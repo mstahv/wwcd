@@ -210,4 +210,9 @@ public class MainLayout extends org.vaadin.firitin.appframework.MainLayout {
         }
     }
 
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+        attachEvent.getUI().setPollInterval(1000);
+    }
 }
