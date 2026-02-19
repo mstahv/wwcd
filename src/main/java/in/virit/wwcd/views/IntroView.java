@@ -13,7 +13,7 @@ public class IntroView extends AbstractView {
 
     public IntroView(AdminSession adminSession, AppContext appContext) {
         add(md("""
-                # What We(b) can do in 2025!?
+                # What We(b) can do in 2026!?
                 
                 Web as an application platform is a one big hack - but we still love it. Although designed for mostly
                 read-only content, the web platform has evolved to support complex applications. And the progress

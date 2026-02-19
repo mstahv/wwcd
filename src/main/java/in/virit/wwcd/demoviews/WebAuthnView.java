@@ -15,7 +15,7 @@ public class WebAuthnView extends AbstractThing {
         add(md("""
                 Biometric authentication, well, technically not really, but practically yes, via Passkeys and WebAuthn.
 
-                Bold statement: **Only a fool would build username-password logins in 2025**.
+                Bold statement: **Only a fool would build username-password logins in 2026**.
 
                 * Passkeys provide better UX
                 * Passkeys are way more secure (especially among non-tech-savvy users)

@@ -20,6 +20,8 @@ import in.virit.wwcd.session.AppContext;
 import in.virit.wwcd.session.UISession;
 import in.virit.wwcd.views.AgendaView;
 import in.virit.wwcd.views.QAView;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
 import jakarta.inject.Inject;
 import org.vaadin.firitin.components.button.VButton;
 import org.vaadin.firitin.components.orderedlayout.VHorizontalLayout;
@@ -28,7 +30,7 @@ import org.vaadin.firitin.util.style.LumoProps;
 
 @StyleSheet("main-layout.css")
 @UIScoped
-public class MainLayout extends org.vaadin.firitin.appframework.MainLayout {
+public class MainLayout extends org.vaadin.firitin.appframework.MainLayout implements AfterNavigationObserver {
 
     static int layoutCount = 1;
     public PresentationDisplay presentationDisplay = new PresentationDisplay();
@@ -107,8 +109,8 @@ public class MainLayout extends org.vaadin.firitin.appframework.MainLayout {
     }
 
     @Override
-    protected void afterNavigation() {
-        super.afterNavigation();
+    public void afterNavigation(AfterNavigationEvent event) {
+        super.afterNavigation(event);
         adjustNavigation();
     }
 

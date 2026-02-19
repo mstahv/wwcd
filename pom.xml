@@ -12,10 +12,10 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.28.2</quarkus.platform.version>
+        <quarkus.platform.version>3.31.4</quarkus.platform.version>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.4</surefire-plugin.version>
-        <vaadin.version>24.9.2</vaadin.version>
+        <vaadin.version>25.0.5</vaadin.version>
     </properties>
 
     <dependencyManagement>
@@ -46,17 +46,22 @@
         <dependency>
             <groupId>org.parttio</groupId>
             <artifactId>maplibre</artifactId>
-            <version>1.5.0</version>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>in.virit</groupId>
             <artifactId>viritin</artifactId>
-            <version>2.21.1</version>
+            <version>3.1.4</version>
         </dependency>
         <dependency>
             <groupId>in.virit</groupId>
             <artifactId>gauge</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.17.1</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -143,44 +148,8 @@
                 <quarkus.native.enabled>true</quarkus.native.enabled>
             </properties>
         </profile>
-        <profile>
-            <!-- Vaadin Production mode is activated using -Pproduction -->
-            <id>production</id>
-            <activation>
-                <!-- Add-ons are broken in dev mode with quarkus 🤔 -->
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>vaadin-quarkus-extension</artifactId>
-                    <version>${vaadin.version}</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>com.vaadin</groupId>
-                            <artifactId>vaadin-dev</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.vaadin</groupId>
-                        <artifactId>vaadin-maven-plugin</artifactId>
-                        <version>${vaadin.version}</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>prepare-frontend</goal>
-                                    <goal>build-frontend</goal>
-                                </goals>
-                                <phase>compile</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+        <!-- Production profile no longer needed for Vaadin 25 + Quarkus:
+             - vaadin-dev is opt-in (not included by default)
+             - vaadin-maven-plugin is embedded in vaadin-quarkus-extension -->
     </profiles>
 </project>
