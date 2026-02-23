@@ -1,12 +1,10 @@
 package in.virit.wwcd.other;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Named;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 import org.vaadin.addons.maplibre.BaseMapConfigurer;
 import org.vaadin.addons.maplibre.MapLibre;
 
-@ApplicationScoped
-@Named("baseMapConfigurer")
+@SpringComponent("baseMapConfigurer")
 public class MapConfig implements BaseMapConfigurer {
     @Override
     public void configure(MapLibre mapLibre) {

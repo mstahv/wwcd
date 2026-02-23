@@ -1,13 +1,11 @@
 package in.virit.wwcd.session;
 
-import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.quarkus.annotation.VaadinServiceScoped;
-import com.vaadin.quarkus.annotation.VaadinSessionScoped;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
 
-/**
- * A regular UI session, with methods for presentation.
- */
-@VaadinSessionScoped
+@Component
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class AdminSession {
 
     private boolean admin;

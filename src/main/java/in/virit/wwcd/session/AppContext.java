@@ -3,7 +3,7 @@ package in.virit.wwcd.session;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.quarkus.annotation.VaadinServiceScoped;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 import in.virit.wwcd.Demo;
 import in.virit.wwcd.MainView;
 import in.virit.wwcd.Tagline;
@@ -13,9 +13,8 @@ import in.virit.wwcd.views.LobbyView;
 import in.virit.wwcd.views.QAView;
 import in.virit.wwcd.views.VotingLeaderboardView;
 import in.virit.wwcd.views.VotingView;
-import jakarta.enterprise.event.Observes;
-import org.apache.commons.codec.digest.Crypt;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.EventListener;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -26,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@VaadinServiceScoped
+@SpringComponent
 public class AppContext {
 
     private Class<? extends Component> currentView;
@@ -116,12 +115,11 @@ public class AppContext {
         return state == AppState.Normal;
     }
 
-    @ConfigProperty(name = "cryptedPassword")
-    private String cryptedPassword;
+    @Value("${app.password}")
+    private String appPassword;
 
     public void present(UISession uiSession, AdminSession adminSession, String password) {
-        String crypted = Crypt.crypt(password, cryptedPassword);
-        if(!crypted.equals(cryptedPassword)) {
+        if(!password.equals(appPassword)) {
             Notification.show("Password did not match! If you want to use the hosted presentation mode, contact matti ät vaadin dot com").setPosition(Notification.Position.MIDDLE);
             return;
         }
@@ -164,7 +162,8 @@ public class AppContext {
         return voters;
     }
 
-    public void votesChanged(@Observes VotesChanged votesChanged) {
+    @EventListener
+    public void votesChanged(VotesChanged votesChanged) {
         if(state == AppState.Voting) {
             taglinePointMap.put(votesChanged.tagline(), taglinePointMap.getOrDefault(votesChanged.tagline(), 0) + votesChanged.votes());
         } else {

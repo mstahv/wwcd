@@ -11,8 +11,6 @@ import in.virit.wwcd.MainLayout;
 import in.virit.wwcd.Tagline;
 import in.virit.wwcd.session.AdminSession;
 import in.virit.wwcd.session.AppContext;
-import in.virit.wwcd.session.VotesChanged;
-import jakarta.enterprise.event.Observes;
 import org.vaadin.firitin.appframework.MenuItem;
 import org.vaadin.firitin.appframework.VAppLayout;
 import org.vaadin.firitin.components.button.DefaultButton;
@@ -81,10 +79,5 @@ public class VotingLeaderboardView extends AbstractView {
 
     }
 
-    public void observeVotes(@Observes VotesChanged event) {
-        System.out.println("Votes changed, updating leaderboard");
-        // TODO figure out why this is not working
-        ui.access(this::calculateVotes);
-    }
 
 }

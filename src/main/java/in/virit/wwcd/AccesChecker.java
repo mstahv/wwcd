@@ -1,32 +1,31 @@
 package in.virit.wwcd;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasElement;
-import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterListener;
-import com.vaadin.flow.server.UIInitEvent;
-import com.vaadin.quarkus.annotation.VaadinServiceScoped;
+import com.vaadin.flow.server.ServiceInitEvent;
+import com.vaadin.flow.server.VaadinServiceInitListener;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 import in.virit.wwcd.demoviews.AbstractThing;
 import in.virit.wwcd.session.AdminSession;
 import in.virit.wwcd.session.AppContext;
-import in.virit.wwcd.session.UISession;
-import jakarta.enterprise.event.Observes;
-import jakarta.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@VaadinServiceScoped
-public class AccesChecker {
+@SpringComponent
+public class AccesChecker implements VaadinServiceInitListener {
 
-    @Inject
+    @Autowired
     AppContext appContext;
 
-    @Inject
+    @Autowired
     AdminSession adminSession;
 
-    @Inject
-    UISession uiSession;
+    @Override
+    public void serviceInit(ServiceInitEvent event) {
+        event.getSource().addUIInitListener(init ->
+            init.getUI().addBeforeEnterListener(this::beforeEnter));
+    }
 
-    public void beforeEnter(@Observes BeforeEnterEvent event) {
+    private void beforeEnter(BeforeEnterEvent event) {
         System.out.println("Before enter, mode" + appContext.getState());
         if(adminSession.isAdmin()) {
             System.out.println("Admin access to " + event.getNavigationTarget().getSimpleName());
@@ -54,11 +53,5 @@ public class AccesChecker {
             // Go home
             event.forwardTo(MainView.class);
         }
-    }
-
-    public void register(@Observes UIInitEvent uiInitEvent) {
-        System.out.println("UI init event, App state" + appContext.getState());
-        // Not needed as we use CDI event observers 😎
-        //uiInitEvent.getUI().addBeforeEnterListener(this);
     }
 }

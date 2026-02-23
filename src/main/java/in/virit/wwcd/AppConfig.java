@@ -10,5 +10,6 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @StyleSheet(Lumo.STYLESHEET)
 @StyleSheet(Lumo.UTILITY_STYLESHEET)
 @PWA(name = "What We(b) can Do", shortName = "WWCD")
+@Push
 public class AppConfig implements AppShellConfigurator {
 }

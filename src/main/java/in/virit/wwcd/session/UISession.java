@@ -2,17 +2,15 @@ package in.virit.wwcd.session;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.router.RouteAlias;
-import com.vaadin.flow.router.RoutePrefix;
-import com.vaadin.flow.router.RouterLayout;
-import com.vaadin.flow.server.VaadinService;
-import com.vaadin.quarkus.annotation.UIScoped;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.annotation.UIScope;
 import in.virit.wwcd.Tagline;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import jakarta.enterprise.event.Event;
-import jakarta.enterprise.inject.spi.CDI;
-import jakarta.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,17 +18,18 @@ import java.util.Set;
 /**
  * A regular UI session, with methods for presentation.
  */
-@UIScoped
+@SpringComponent
+@UIScope
 public class UISession {
     public static final int MAXVOTES = 10;
 
     private final UI ui;
 
-    @Inject
+    @Autowired
     AppContext context;
 
-    @Inject
-    Event<VotesChanged> votesChangedEvent;
+    @Autowired
+    ApplicationEventPublisher eventPublisher;
 
     Set<Tagline> votes = new HashSet<>();
 
@@ -70,14 +69,14 @@ public class UISession {
 
         if(votes.contains(t)) {
             votes.remove(t);
-            votesChangedEvent.fire(new VotesChanged(t, -1));
+            eventPublisher.publishEvent(new VotesChanged(t, -1));
             return false;
         } else {
             if(votes.size() >= MAXVOTES) {
                 throw new Exception("Max votes already used!");
             }
             votes.add(t);
-            votesChangedEvent.fire(new VotesChanged(t, 1));
+            eventPublisher.publishEvent(new VotesChanged(t, 1));
             return true;
         }
     }

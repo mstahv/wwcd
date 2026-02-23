@@ -13,7 +13,8 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
-import com.vaadin.quarkus.annotation.UIScoped;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.annotation.UIScope;
 import in.virit.wwcd.demoviews.AbstractThing;
 import in.virit.wwcd.session.AdminSession;
 import in.virit.wwcd.session.AppContext;
@@ -22,23 +23,24 @@ import in.virit.wwcd.views.AgendaView;
 import in.virit.wwcd.views.QAView;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
-import jakarta.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.firitin.components.button.VButton;
 import org.vaadin.firitin.components.orderedlayout.VHorizontalLayout;
 import org.vaadin.firitin.util.fullscreen.FullScreen;
 import org.vaadin.firitin.util.style.LumoProps;
 
 @StyleSheet("main-layout.css")
-@UIScoped
+@SpringComponent
+@UIScope
 public class MainLayout extends org.vaadin.firitin.appframework.MainLayout implements AfterNavigationObserver {
 
     static int layoutCount = 1;
     public PresentationDisplay presentationDisplay = new PresentationDisplay();
-    @Inject
+    @Autowired
     AppContext appContext;
-    @Inject
+    @Autowired
     UISession uiSession;
-    @Inject
+    @Autowired
     AdminSession adminSession;
     Button enterPresentation = new VButton(VaadinIcon.PLAY, this::enterPresentation)
             .withTooltip("Enter presentation mode");
