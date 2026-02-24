@@ -9,7 +9,6 @@ import in.virit.wwcd.MainView;
 import in.virit.wwcd.Tagline;
 import in.virit.wwcd.views.AgendaView;
 import in.virit.wwcd.views.DemosView;
-import in.virit.wwcd.views.IntroView;
 import in.virit.wwcd.views.LobbyView;
 import in.virit.wwcd.views.QAView;
 import in.virit.wwcd.views.VotingLeaderboardView;
@@ -134,6 +133,7 @@ public class AppContext {
             return;
         }
         state = AppState.Presentation;
+        startofPresentation = Instant.now();
         this.spectatorMode = spectatorMode;
         taglinePointMap.forEach((t, v) -> taglinePointMap.put(t, 0));
         uiSessions.remove(uiSession);
@@ -142,11 +142,6 @@ public class AppContext {
         Notification.show("Entered presentation mode").setPosition(Notification.Position.MIDDLE);
         uiSession.navigate(LobbyView.class);
     }
-    public void begin() {
-        startofPresentation = Instant.now();
-        moveSessionsTo(IntroView.class);
-    }
-
     public void moveSessionsTo(Class<? extends Component> view) {
         startOfView = Instant.now();
         currentView = view;

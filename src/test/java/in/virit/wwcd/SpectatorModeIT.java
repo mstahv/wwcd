@@ -75,19 +75,13 @@ public class SpectatorModeIT {
             presenterPage.keyboard().press("Enter");
             presenterMopo.waitForConnectionToSettle();
 
-            // Both should be on LobbyView
-            assertThat(presenterPage.locator("vaadin-button:has-text('Begin')")).isVisible();
-            waitForViewer(viewerPage, viewerMopo);
-            assertThat(viewerPage.getByText("Wait for the presenter to begin")).isVisible();
-            // Viewer must NOT see the admin-only Begin button
-            assertThat(viewerPage.locator("vaadin-button:has-text('Begin')")).not().isVisible();
-
-            // --- Begin → IntroView ---
-            presenterMopo.click("vaadin-button:has-text('Begin')");
+            // Both should be on LobbyView with intro content
             assertThat(presenterPage.getByText("What We(b) can do in 2026")).isVisible();
-
+            assertThat(presenterPage.locator("vaadin-button:has-text('Vote')")).isVisible();
             waitForViewer(viewerPage, viewerMopo);
             assertThat(viewerPage.getByText("What We(b) can do in 2026")).isVisible();
+            // Viewer must NOT see the admin-only Vote button
+            assertThat(viewerPage.locator("vaadin-button:has-text('Vote')")).not().isVisible();
 
             // --- Vote → Voting phase ---
             presenterMopo.click("vaadin-button:has-text('Vote')");

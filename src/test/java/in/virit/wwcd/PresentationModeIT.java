@@ -85,13 +85,14 @@ public class PresentationModeIT {
             presenterPage.keyboard().press("Enter");
             presenterMopo.waitForConnectionToSettle();
 
-            // Presenter should be on LobbyView with Begin button
-            assertThat(presenterPage.locator("vaadin-button:has-text('Begin')")).isVisible();
+            // Presenter should be on LobbyView with Vote button
+            assertThat(presenterPage.locator("vaadin-button:has-text('Vote')")).isVisible();
+            assertThat(presenterPage.getByText("What We(b) can do in 2026")).isVisible();
 
             // Viewer should be automatically moved to LobbyView via server push/poll
             viewerPage.waitForTimeout(2000);
             viewerMopo.waitForConnectionToSettle();
-            assertThat(viewerPage.getByText("Wait for the presenter to begin")).isVisible();
+            assertThat(viewerPage.getByText("What We(b) can do in 2026")).isVisible();
 
         } finally {
             viewerContext.close();
@@ -127,15 +128,9 @@ public class PresentationModeIT {
             presenterPage.keyboard().press("Enter");
             presenterMopo.waitForConnectionToSettle();
 
-            // Both should be on LobbyView
-            assertThat(presenterPage.locator("vaadin-button:has-text('Begin')")).isVisible();
-            waitForViewer(viewerPage, viewerMopo);
-            assertThat(viewerPage.getByText("Wait for the presenter to begin")).isVisible();
-
-            // --- Begin → IntroView ---
-            presenterMopo.click("vaadin-button:has-text('Begin')");
+            // Both should be on LobbyView with intro content
             assertThat(presenterPage.getByText("What We(b) can do in 2026")).isVisible();
-
+            assertThat(presenterPage.locator("vaadin-button:has-text('Vote')")).isVisible();
             waitForViewer(viewerPage, viewerMopo);
             assertThat(viewerPage.getByText("What We(b) can do in 2026")).isVisible();
 
