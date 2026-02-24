@@ -28,7 +28,9 @@ public class PresentationTimer extends Component {
 
     @Override
     public void setVisible(boolean visible) {
-        super.setVisible(visible);
+        // this will for some reason kill Aura styles in AppLayout
+        // super.setVisible(visible);
+        getElement().getStyle().setDisplay(visible ? Style.Display.BLOCK : Style.Display.NONE);
         getElement().executeJs("""
                 if(!this.timerInterval) {
                     const el = this;
@@ -57,5 +59,6 @@ public class PresentationTimer extends Component {
                     }, 1000);
                 }
                 """);
+
     }
 }

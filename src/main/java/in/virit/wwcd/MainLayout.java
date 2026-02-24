@@ -9,7 +9,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.H5;
-import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
@@ -27,9 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.firitin.components.button.VButton;
 import org.vaadin.firitin.components.orderedlayout.VHorizontalLayout;
 import org.vaadin.firitin.util.fullscreen.FullScreen;
+import org.vaadin.firitin.util.style.AuraProps;
 import org.vaadin.firitin.util.style.LumoProps;
 
-@StyleSheet("main-layout.css")
+@StyleSheet("main.css")
 @SpringComponent
 @UIScope
 public class MainLayout extends org.vaadin.firitin.appframework.MainLayout implements AfterNavigationObserver {
@@ -85,13 +86,14 @@ public class MainLayout extends org.vaadin.firitin.appframework.MainLayout imple
 
     @Override
     protected Object getDrawerHeader() {
-        return new Image("icons/icon-line.png", "WWCD") {{
-            setHeight("3em");
+        return new SvgIcon("icons/icon-line.svg") {{
+            setSize("4.5em");
             getStyle().setDisplay(Style.Display.BLOCK);
             getStyle().setMarginLeft("auto");
             getStyle().setMarginRight("auto");
             getStyle().setMarginTop("2em");
             getStyle().setMarginBottom("1em");
+            getStyle().setColor(AuraProps.PURPLE.var());
         }};
     }
 

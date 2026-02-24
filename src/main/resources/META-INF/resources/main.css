@@ -1,0 +1,23 @@
+/* The offcial hacks by Joukka to make aura bling bling
+
+*/
+
+html {
+  --aura-accent-color-light: var(--aura-purple);
+  --aura-accent-color-dark: var(--aura-purple);
+  --aura-background-color-light: #E8ECF8;
+  --aura-background-color-dark: #070B12;
+}
+
+:is(vaadin-button, vaadin-menu-bar-button, vaadin-drawer-toggle, vaadin-side-nav, vaadin-tabs) {
+    --aura-accent-color-light: var(--aura-neutral-light);
+    --aura-accent-color-dark: var(--aura-neutral-dark);
+}
+
+vaadin-dashboard-widget {
+  --aura-surface-opacity: 1;
+}
+
+vaadin-icon {
+    color: var(--aura-accent-color);
+}
