@@ -28,7 +28,7 @@ import org.vaadin.firitin.components.button.VButton;
 import org.vaadin.firitin.components.orderedlayout.VHorizontalLayout;
 import org.vaadin.firitin.util.fullscreen.FullScreen;
 import org.vaadin.firitin.util.style.AuraProps;
-import org.vaadin.firitin.util.style.LumoProps;
+import org.vaadin.firitin.util.style.VaadinCssProps;
 
 @StyleSheet("main.css")
 @SpringComponent
@@ -210,7 +210,7 @@ public class MainLayout extends org.vaadin.firitin.appframework.MainLayout imple
                     setEnabled(true);
                 } else {
                     setEnabled(false);
-                    getStyle().setColor(LumoProps.CONTRAST.var());
+                    getStyle().setColor(VaadinCssProps.TEXT_COLOR.var());
                 }
             }
         }

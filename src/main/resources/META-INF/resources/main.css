@@ -18,6 +18,6 @@ vaadin-dashboard-widget {
   --aura-surface-opacity: 1;
 }
 
-vaadin-icon {
+vaadin-side-nav-item vaadin-icon {
     color: var(--aura-accent-color);
 }

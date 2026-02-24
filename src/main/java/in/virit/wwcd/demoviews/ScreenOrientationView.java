@@ -10,7 +10,7 @@ import org.vaadin.firitin.appframework.MainLayout;
 import org.vaadin.firitin.appframework.MenuItem;
 import org.vaadin.firitin.components.html.VDiv;
 import org.vaadin.firitin.util.ResizeObserver;
-import org.vaadin.firitin.util.style.LumoProps;
+import org.vaadin.firitin.util.style.AuraProps;
 
 @MenuItem(title = "Screen Orientation API", icon = VaadinIcon.ROTATE_LEFT)
 @Route(layout = MainLayout.class)
@@ -35,7 +35,7 @@ public class ScreenOrientationView extends AbstractThing {
                     getStyle().setBackgroundColor(NamedColor.DARKSLATEGREY);
                     getStyle().setColor(NamedColor.WHITE);
                     getStyle().setFontWeight(Style.FontWeight.BOLD);
-                    getStyle().setFontSize(LumoProps.FONT_SIZE_L.var());
+                    getStyle().setFontSize(AuraProps.FONT_SIZE_L.var());
                     getStyle().setPadding("1em");
                     getStyle().setBoxSizing(Style.BoxSizing.BORDER_BOX);
                     setWidth("0");

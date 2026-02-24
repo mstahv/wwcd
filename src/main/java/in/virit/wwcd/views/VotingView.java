@@ -79,7 +79,7 @@ public class VotingView extends AbstractView {
             }
 
             private void assignColor(boolean voted) {
-                Color color = voted ? NamedColor.GREEN : NamedColor.BLACK;
+                Color color = voted ? NamedColor.PURPLE : NamedColor.BLACK;
                 getStyle().setColor(color);
             }
         }

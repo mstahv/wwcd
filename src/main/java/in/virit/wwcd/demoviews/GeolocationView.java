@@ -22,7 +22,7 @@ import org.vaadin.firitin.geolocation.Geolocation;
 import org.vaadin.firitin.geolocation.GeolocationCoordinates;
 import org.vaadin.firitin.layouts.HorizontalFloatLayout;
 import org.vaadin.firitin.rad.PrettyPrinter;
-import org.vaadin.firitin.util.style.LumoProps;
+import org.vaadin.firitin.util.style.AuraProps;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -94,7 +94,7 @@ public class GeolocationView extends AbstractThing {
             add(new VerticalLayout(new H5(header), new Pre(String.valueOf(value))){{
                 setMargin(false);
                 setPadding(false);
-                getStyle().setFontSize(LumoProps.FONT_SIZE_XS.var());
+                getStyle().setFontSize(AuraProps.FONT_SIZE_XS.var());
                 setWidth(null);
             }});
         }

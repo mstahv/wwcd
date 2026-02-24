@@ -54,7 +54,7 @@ public class AgendaView extends VVerticalLayout {
                 String presentationName = t.demo().getName();
                 if(adminSession.isAdmin()) {
                     Button button = new VButton(presentationName){{
-                        addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+                        addThemeVariants(ButtonVariant.AURA_TERTIARY);
                         if(t.presented().get()) {
                             getStyle().setColor(NamedColor.DARKOLIVEGREEN);
                         }
