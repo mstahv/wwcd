@@ -8,6 +8,7 @@ import in.virit.wwcd.Demo;
 import in.virit.wwcd.MainView;
 import in.virit.wwcd.Tagline;
 import in.virit.wwcd.views.AgendaView;
+import in.virit.wwcd.views.DemosView;
 import in.virit.wwcd.views.IntroView;
 import in.virit.wwcd.views.LobbyView;
 import in.virit.wwcd.views.QAView;
@@ -32,6 +33,8 @@ public class AppContext {
     private List<AgendaItem> agenda;
     private Instant startOfView;
     private Instant startofPresentation;
+    private boolean spectatorMode;
+    private AgendaItem currentDemo;
 
     public void registerUI(UISession uiSession) {
         uiSessions.add(uiSession);
@@ -47,6 +50,8 @@ public class AppContext {
 
     public void closePresentation() {
         state = AppState.Normal;
+        spectatorMode = false;
+        currentDemo = null;
         moveSessionsTo(MainView.class);
         UI.getCurrent().navigate(MainView.class);
     }
@@ -75,7 +80,12 @@ public class AppContext {
     public void showDemo(AgendaItem t) {
         state = AppState.Demos;
         t.presented().set(true);
-        moveSessionsTo(t.demo().getView());
+        currentDemo = t;
+        if (spectatorMode) {
+            moveSessionsTo(DemosView.class);
+        } else {
+            moveSessionsTo(t.demo().getView());
+        }
     }
 
     public void qa() {
@@ -118,12 +128,13 @@ public class AppContext {
     @Value("${app.password}")
     private String appPassword;
 
-    public void present(UISession uiSession, AdminSession adminSession, String password) {
+    public void present(UISession uiSession, AdminSession adminSession, String password, boolean spectatorMode) {
         if(!password.equals(appPassword)) {
             Notification.show("Password did not match! If you want to use the hosted presentation mode, contact matti ät vaadin dot com").setPosition(Notification.Position.MIDDLE);
             return;
         }
         state = AppState.Presentation;
+        this.spectatorMode = spectatorMode;
         taglinePointMap.forEach((t, v) -> taglinePointMap.put(t, 0));
         uiSessions.remove(uiSession);
         adminSession.setAdmin(true);
@@ -173,6 +184,14 @@ public class AppContext {
 
     public Map<Tagline, Integer> calculatePoints() {
         return Collections.unmodifiableMap(taglinePointMap);
+    }
+
+    public boolean isSpectatorMode() {
+        return spectatorMode;
+    }
+
+    public AgendaItem getCurrentDemo() {
+        return currentDemo;
     }
 
     public record AgendaItem(Demo demo, int points, AtomicBoolean presented) {}

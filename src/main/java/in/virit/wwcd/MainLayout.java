@@ -78,9 +78,9 @@ public class MainLayout extends org.vaadin.firitin.appframework.MainLayout imple
     }
 
     private void enterPresentation() {
-        PasswordPrompt.prompt().thenAccept(pw -> {
+        PasswordPrompt.prompt().thenAccept(result -> {
             FullScreen.requestFullscreen();
-            appContext.present(uiSession, adminSession, pw);
+            appContext.present(uiSession, adminSession, result.password(), result.spectatorMode());
         });
     }
 

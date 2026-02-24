@@ -13,11 +13,11 @@ public class QAView extends AbstractView {
 
     public QAView(AdminSession adminSession, AppContext appContext) {
         add(md("""
-                
+
                 Questions, comments, ideas?
-                
-                Bookmark this app at [wwcd.virit.in](https://wwcd.virit.in/), all demos will be available after the presentaion.
-                
+
+                Bookmark this app at [w.virit.in](https://w.virit.in/), all demos will be available after the presentation.
+
                 """));
 
         if(adminSession.isAdmin()) {
