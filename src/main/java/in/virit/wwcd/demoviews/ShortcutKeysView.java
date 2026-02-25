@@ -3,13 +3,26 @@ package in.virit.wwcd.demoviews;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.Shortcuts;
+import com.vaadin.flow.component.html.NativeTable;
+import com.vaadin.flow.component.html.NativeTableBody;
+import com.vaadin.flow.component.html.NativeTableCell;
+import com.vaadin.flow.component.html.NativeTableHeader;
+import com.vaadin.flow.component.html.NativeTableHeaderCell;
+import com.vaadin.flow.component.html.NativeTableRow;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
+import in.virit.wwcd.session.ShortcutTestSession;
+import in.virit.wwcd.session.ShortcutTestSession.TestResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.firitin.appframework.MainLayout;
 import org.vaadin.firitin.appframework.MenuItem;
 import org.vaadin.firitin.components.button.VButton;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @MenuItem(title = "Shortcut Keys", icon = VaadinIcon.KEYBOARD)
 @Route(layout = MainLayout.class)
@@ -18,11 +31,16 @@ public class ShortcutKeysView extends AbstractThing {
     private final boolean mac;
     private final KeyModifier modifier;
     private final String modifierName;
+    private final ShortcutCompatibilityTable table;
 
-    public ShortcutKeysView() {
+    private final ShortcutTestSession testSession;
+
+    public ShortcutKeysView(ShortcutTestSession testSession) {
+        this.testSession = testSession;
         mac = VaadinSession.getCurrent().getBrowser().isMacOSX();
         modifier = mac ? KeyModifier.META : KeyModifier.CONTROL;
         modifierName = mac ? "Cmd" : "Ctrl";
+        table = new ShortcutCompatibilityTable(modifierName);
 
         add(md("""
                 Keyboard shortcuts are essential UX for apps people use daily — often called shortcut keys,
@@ -46,6 +64,7 @@ public class ShortcutKeysView extends AbstractThing {
 
         add(new VButton("Save (%s+S)".formatted(modifierName), VaadinIcon.CHECK, e -> {
             notify("%s+S: Save triggered!".formatted(modifierName));
+            markPassed(modifierName + "+S");
         }) {{
             addClickShortcut(Key.KEY_S, modifier)
                     .setBrowserDefaultAllowed(false);
@@ -54,6 +73,7 @@ public class ShortcutKeysView extends AbstractThing {
         add(md("For example only Firefox allows overriding %s+R".formatted(modifierName)));
         add(new VButton("Reload (%s+R)".formatted(modifierName), VaadinIcon.REFRESH, e -> {
             notify("%s+R: App-level reload triggered!".formatted(modifierName));
+            markPassed(modifierName + "+R");
         }) {{
             addClickShortcut(Key.KEY_R, modifier)
                     .setBrowserDefaultAllowed(false);
@@ -62,6 +82,7 @@ public class ShortcutKeysView extends AbstractThing {
         add(md("None of the main stream browsers allow web apps to override shortcut associated to opening new window, unless running as **PWA**."));
         add(new VButton("New (%s+N)".formatted(modifierName), VaadinIcon.PLUS, e -> {
             notify("%s+N: New item created!".formatted(modifierName));
+            markPassed(modifierName + "+N");
         }) {{
             addClickShortcut(Key.KEY_N, modifier)
                     .setBrowserDefaultAllowed(false);
@@ -102,8 +123,18 @@ public class ShortcutKeysView extends AbstractThing {
         shortcut("7", Key.DIGIT_7);
         shortcut("8", Key.DIGIT_8);
         shortcut("9", Key.DIGIT_9);
-        Shortcuts.addShortcutListener(this,
-                () -> notify("%s+F5 intercepted!".formatted(modifierName)), Key.F5);
+        fnShortcut("F1", Key.F1);
+        fnShortcut("F2", Key.F2);
+        fnShortcut("F3", Key.F3);
+        fnShortcut("F4", Key.F4);
+        fnShortcut("F5", Key.F5);
+        fnShortcut("F6", Key.F6);
+        fnShortcut("F7", Key.F7);
+        fnShortcut("F8", Key.F8);
+        fnShortcut("F9", Key.F9);
+        fnShortcut("F10", Key.F10);
+        fnShortcut("F11", Key.F11);
+        fnShortcut("F12", Key.F12);
 
         add(md("""
                 ### Browser shortcut override test
@@ -114,50 +145,14 @@ public class ShortcutKeysView extends AbstractThing {
                 override — a notification appears when the override succeeds. In a real app,
                 developers would design their own shortcut scheme to avoid conflicts.
 
-                #### Protected — avoid these
+                Try pressing the shortcuts listed below. Successfully intercepted ones get a \u2705.
+                Click a cell in the test column to manually mark it as \uD83D\uDEAB (failed) or click
+                again to cycle through states. Results are saved across page reloads.
+                """.formatted(modifierName)));
 
-                | Shortcut | Browser/OS action | Chrome | Safari (Mac) | Firefox | Chrome/Edge (Win) | Firefox (Win) |
-                |---|---|---|---|---|---|---|
-                | **%1$s+L** | Address bar | **Protected** | **Protected** | **Protected** | Overridable | Overridable |
-                | **%1$s+M** | Minimize (Mac OS) | **Protected** | **Protected** | Overridable | Overridable | Overridable |
-                | **%1$s+N** | New window | **Protected** | **Protected** | **Protected** | **Protected** | **Protected** |
-                | **%1$s+Q** | Quit (Mac) | **Protected** | **Protected** | **Protected** | Overridable | Overridable |
-                | **%1$s+R** | Reload | **Protected** | **Protected** | Overridable | Overridable | Overridable |
-                | **%1$s+T** | New tab | **Protected** | **Protected** | **Protected** | **Protected** | **Protected** |
-                | **%1$s+W** | Close tab | **Protected** | **Protected** | **Protected** | **Protected** | **Protected** |
+        add(table);
 
-                #### Commonly used by browser — but overridable
-
-                | Shortcut | Browser action | Chrome | Safari (Mac) | Firefox | Chrome/Edge (Win) | Firefox (Win) |
-                |---|---|---|---|---|---|---|
-                | **%1$s+A** | Select all | Overridable | Overridable | Overridable | Overridable | Overridable |
-                | **%1$s+C** | Copy | Overridable | Overridable | Overridable | Overridable | Overridable |
-                | **%1$s+D** | Bookmark page | Overridable | Overridable | Overridable | Overridable | Overridable |
-                | **%1$s+F** | Find in page | Overridable | Overridable | Overridable | Overridable | Overridable |
-                | **%1$s+G** | Find next | Overridable | Overridable | Overridable | Overridable | Overridable |
-                | **%1$s+H** | History / Hide (Mac) | Overridable | **Protected** | Overridable | Overridable | Overridable |
-                | **%1$s+O** | Open file | Overridable | **Protected** | Overridable | Overridable | Overridable |
-                | **%1$s+P** | Print | Overridable | Overridable | Overridable | Overridable | Overridable |
-                | **%1$s+S** | Save page | Overridable | Overridable | Overridable | Overridable | Overridable |
-                | **%1$s+U** | View source | Overridable | Overridable | Overridable | Overridable | Overridable |
-                | **%1$s+V** | Paste | Overridable | Overridable | Overridable | Overridable | Overridable |
-                | **%1$s+X** | Cut | Overridable | Overridable | Overridable | Overridable | Overridable |
-                | **%1$s+Z** | Undo | Overridable | Overridable | Overridable | Overridable | Overridable |
-                | **%1$s+0** | Reset zoom | Overridable | Overridable | Overridable | Overridable | Overridable |
-                | **%1$s+1–9** | Switch to tab | Overridable | Overridable | Overridable | Overridable | Overridable |
-                | **F5** | Reload | Overridable | N/A (macOS) | Overridable | Overridable | Overridable |
-
-                #### Safest — no common browser binding
-
-                | Shortcut | Chrome | Safari (Mac) | Firefox | Chrome/Edge (Win) | Firefox (Win) |
-                |---|---|---|---|---|---|
-                | **%1$s+B** | Free | Free | Free | Free | Free |
-                | **%1$s+E** | Free | Free | Free | Free | Free |
-                | **%1$s+I** | Free | Free | Free | Free | Free |
-                | **%1$s+J** | Free | Free | Free | Free | Free |
-                | **%1$s+K** | Free | Free | Free | Free | Free |
-                | **%1$s+Y** | Free | Free | Free | Free | Free |
-
+        add(md("""
                 *The situation is mostly similar on Windows and Linux, but with **Ctrl** instead of **Cmd**.*
 
                 *Some shortcuts like %1$s+M (minimize) and %1$s+H (hide) are reserved by the
@@ -209,13 +204,36 @@ public class ShortcutKeysView extends AbstractThing {
                 shortcuts like %1$s+T (new tab), %1$s+L (address bar), and even F5 (refresh) become
                 available for your app to use freely.
                 """.formatted(modifierName)));
+
+        // Restore saved test results from session
+        restoreTestResults();
+    }
+
+    private void markPassed(String keyDisplay) {
+        testSession.markPassed(keyDisplay);
+        table.updateTestCell(keyDisplay, TestResult.PASSED);
+    }
+
+    private void restoreTestResults() {
+        for (var entry : testSession.getResults().entrySet()) {
+            table.updateTestCell(entry.getKey(), entry.getValue());
+        }
     }
 
     /** Registers a shortcut with the platform-appropriate modifier key. */
     private void shortcut(String keyName, Key key) {
-        Shortcuts.addShortcutListener(this,
-                () -> notify("%s+%s intercepted!".formatted(modifierName, keyName)),
-                key, modifier);
+        Shortcuts.addShortcutListener(this, () -> {
+            notify("%s+%s intercepted!".formatted(modifierName, keyName));
+            markPassed(modifierName + "+" + keyName);
+        }, key, modifier);
+    }
+
+    /** Registers a function key shortcut (no modifier). */
+    private void fnShortcut(String keyName, Key key) {
+        Shortcuts.addShortcutListener(this, () -> {
+            notify("%s intercepted!".formatted(keyName));
+            markPassed(keyName);
+        }, key);
     }
 
     /** Registers a shortcut with the platform modifier plus extra modifiers. */
@@ -228,5 +246,203 @@ public class ShortcutKeysView extends AbstractThing {
 
     private void notify(String message) {
         Notification.show(message, 3000, Notification.Position.MIDDLE);
+    }
+
+    // --- Shortcut compatibility data model ---
+
+    enum Support {
+        PROTECTED("\uD83D\uDEAB", "Protected by browser"),
+        OVERRIDABLE("\uD83D\uDC4C", "Overridable"),
+        FREE("\uD83D\uDC4D", "Free — no browser binding"),
+        NA("\u2014", "Not applicable");
+
+        final String symbol;
+        final String tooltip;
+
+        Support(String symbol, String tooltip) {
+            this.symbol = symbol;
+            this.tooltip = tooltip;
+        }
+    }
+
+    record ShortcutInfo(String keyFormat, String browserAction,
+            Support chromeMac, Support safariMac, Support firefoxMac,
+            Support chromeWin, Support firefoxWin) {
+    }
+
+    record ShortcutGroup(String label, List<ShortcutInfo> entries) {
+    }
+
+    private static final Support P = Support.PROTECTED;
+    private static final Support O = Support.OVERRIDABLE;
+    private static final Support FR = Support.FREE;
+    private static final Support NA = Support.NA;
+
+    private static final List<ShortcutGroup> SHORTCUT_GROUPS = List.of(
+            new ShortcutGroup("Protected — avoid these, unless using a PWA", List.of(
+                    new ShortcutInfo("%s+L", "Address bar", P, P, P, O, O),
+                    new ShortcutInfo("%s+M", "Minimize (Mac OS)", P, P, O, O, O),
+                    new ShortcutInfo("%s+N", "New window", P, P, P, P, P),
+                    new ShortcutInfo("%s+Q", "Quit (Mac)", P, P, P, O, O),
+                    new ShortcutInfo("%s+R", "Reload", P, P, O, O, O),
+                    new ShortcutInfo("%s+T", "New tab", P, P, P, P, P),
+                    new ShortcutInfo("%s+W", "Close tab", P, P, P, P, P)
+            )),
+            new ShortcutGroup("Commonly used by browser — but mostly overridable", List.of(
+                    new ShortcutInfo("%s+A", "Select all", O, O, O, O, O),
+                    new ShortcutInfo("%s+C", "Copy", O, O, O, O, O),
+                    new ShortcutInfo("%s+D", "Bookmark page", O, O, O, O, O),
+                    new ShortcutInfo("%s+F", "Find in page", O, O, O, O, O),
+                    new ShortcutInfo("%s+G", "Find next", O, O, O, O, O),
+                    new ShortcutInfo("%s+H", "History / Hide (Mac)", O, P, O, O, O),
+                    new ShortcutInfo("%s+O", "Open file", O, P, O, O, O),
+                    new ShortcutInfo("%s+P", "Print", O, O, O, O, O),
+                    new ShortcutInfo("%s+S", "Save page", O, O, O, O, O),
+                    new ShortcutInfo("%s+U", "View source", O, O, O, O, O),
+                    new ShortcutInfo("%s+V", "Paste", O, O, O, O, O),
+                    new ShortcutInfo("%s+X", "Cut", O, O, O, O, O),
+                    new ShortcutInfo("%s+Z", "Undo", O, O, O, O, O),
+                    new ShortcutInfo("%s+0", "Reset zoom", O, O, O, O, O),
+                    new ShortcutInfo("%s+1", "Switch to tab 1", O, O, O, O, O),
+                    new ShortcutInfo("%s+2", "Switch to tab 2", O, O, O, O, O),
+                    new ShortcutInfo("%s+3", "Switch to tab 3", O, O, O, O, O),
+                    new ShortcutInfo("%s+4", "Switch to tab 4", O, O, O, O, O),
+                    new ShortcutInfo("%s+5", "Switch to tab 5", O, O, O, O, O),
+                    new ShortcutInfo("%s+6", "Switch to tab 6", O, O, O, O, O),
+                    new ShortcutInfo("%s+7", "Switch to tab 7", O, O, O, O, O),
+                    new ShortcutInfo("%s+8", "Switch to tab 8", O, O, O, O, O),
+                    new ShortcutInfo("%s+9", "Switch to last tab", O, O, O, O, O)
+            )),
+            new ShortcutGroup("Safest — no known common browser binding", List.of(
+                    new ShortcutInfo("%s+B", "", FR, FR, FR, FR, FR),
+                    new ShortcutInfo("%s+E", "", FR, FR, FR, FR, FR),
+                    new ShortcutInfo("%s+I", "", FR, FR, FR, FR, FR),
+                    new ShortcutInfo("%s+J", "", FR, FR, FR, FR, FR),
+                    new ShortcutInfo("%s+K", "", FR, FR, FR, FR, FR),
+                    new ShortcutInfo("%s+Y", "", FR, FR, FR, FR, FR)
+            )),
+            new ShortcutGroup("Function keys (no modifier)", List.of(
+                    new ShortcutInfo("F1", "Help", FR, FR, FR, O, O),
+                    new ShortcutInfo("F2", "", FR, FR, FR, FR, FR),
+                    new ShortcutInfo("F3", "Find next", O, FR, O, O, O),
+                    new ShortcutInfo("F4", "", FR, FR, FR, FR, FR),
+                    new ShortcutInfo("F5", "Reload", O, NA, O, O, O),
+                    new ShortcutInfo("F6", "Focus address bar", O, O, O, O, O),
+                    new ShortcutInfo("F7", "Caret browsing (Firefox)", FR, FR, O, FR, O),
+                    new ShortcutInfo("F8", "", FR, FR, FR, FR, FR),
+                    new ShortcutInfo("F9", "", FR, FR, FR, FR, FR),
+                    new ShortcutInfo("F10", "Activate menu bar", FR, FR, FR, O, O),
+                    new ShortcutInfo("F11", "Fullscreen / Exposé (Mac)", O, P, O, O, O),
+                    new ShortcutInfo("F12", "DevTools", O, FR, O, O, O)
+            ))
+    );
+
+    // --- Compatibility table component ---
+
+    private class ShortcutCompatibilityTable extends NativeTable {
+
+        private static final int COL_COUNT = 8;
+        private final Map<String, NativeTableCell> testCells = new HashMap<>();
+
+        ShortcutCompatibilityTable(String modifierName) {
+            addClassName("shortcut-table");
+
+            var thead = new NativeTableHeader();
+            var headerRow = new NativeTableRow();
+            headerRow.addClassName("header-row");
+            for (String col : new String[]{"Shortcut", "Browser/OS action",
+                    "Chrome (Mac)", "Safari (Mac)", "Firefox (Mac)",
+                    "Chrome/Edge (Win)", "Firefox (Win)", "Your test (click to mark protected)"}) {
+                headerRow.add(th(col));
+            }
+            thead.add(headerRow);
+            add(thead);
+
+            var tbody = new NativeTableBody();
+            for (var group : SHORTCUT_GROUPS) {
+                var groupCell = th(group.label());
+                groupCell.getElement().setAttribute("colspan", String.valueOf(COL_COUNT));
+                var groupRow = new NativeTableRow();
+                groupRow.addClassName("group-header");
+                groupRow.add(groupCell);
+                tbody.add(groupRow);
+
+                for (var entry : group.entries()) {
+                    var row = new NativeTableRow();
+
+                    String keyDisplay = entry.keyFormat().formatted(modifierName);
+                    var keyCell = td(keyDisplay);
+                    keyCell.addClassName("shortcut-key");
+                    row.add(keyCell);
+
+                    row.add(td(entry.browserAction()));
+
+                    for (var support : new Support[]{entry.chromeMac(), entry.safariMac(),
+                            entry.firefoxMac(), entry.chromeWin(), entry.firefoxWin()}) {
+                        var cell = td(support.symbol);
+                        cell.getElement().setAttribute("title", support.tooltip);
+                        cell.addClassName("browser-support");
+                        cell.addClassName(support.name().toLowerCase());
+                        row.add(cell);
+                    }
+
+                    var testCell = td("");
+                    testCell.addClassName("test-result");
+                    testCell.getElement().addEventListener("click", e -> cycleTestResult(keyDisplay, testCell));
+                    row.add(testCell);
+                    testCells.put(keyDisplay, testCell);
+
+                    tbody.add(row);
+                }
+            }
+            add(tbody);
+        }
+
+        private void cycleTestResult(String keyDisplay, NativeTableCell cell) {
+            TestResult current = testSession.getResult(keyDisplay);
+            if (current == null) {
+                testSession.markFailed(keyDisplay);
+                applyTestResult(cell, TestResult.FAILED);
+            } else if (current == TestResult.FAILED) {
+                testSession.clear(keyDisplay);
+                applyTestResult(cell, null);
+            } else {
+                testSession.markFailed(keyDisplay);
+                applyTestResult(cell, TestResult.FAILED);
+            }
+        }
+
+        void updateTestCell(String keyDisplay, TestResult result) {
+            var cell = testCells.get(keyDisplay);
+            if (cell != null) {
+                applyTestResult(cell, result);
+            }
+        }
+
+        private void applyTestResult(NativeTableCell cell, TestResult result) {
+            cell.removeClassName("tested");
+            cell.removeClassName("failed");
+            if (result == null) {
+                cell.setText("");
+            } else if (result == TestResult.PASSED) {
+                cell.setText("\u2705");
+                cell.addClassName("tested");
+            } else {
+                cell.setText("\uD83D\uDEAB");
+                cell.addClassName("failed");
+            }
+        }
+
+        private static NativeTableHeaderCell th(String text) {
+            var cell = new NativeTableHeaderCell();
+            cell.setText(text);
+            return cell;
+        }
+
+        private static NativeTableCell td(String text) {
+            var cell = new NativeTableCell();
+            cell.setText(text);
+            return cell;
+        }
     }
 }
