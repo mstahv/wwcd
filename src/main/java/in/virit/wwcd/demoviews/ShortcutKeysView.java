@@ -70,7 +70,7 @@ public class ShortcutKeysView extends AbstractThing {
                     .setBrowserDefaultAllowed(false);
         }});
 
-        add(md("For example only Firefox allows overriding %s+R".formatted(modifierName)));
+        add(md("For example only Firefox and Chrome allow overriding %s+R".formatted(modifierName)));
         add(new VButton("Reload (%s+R)".formatted(modifierName), VaadinIcon.REFRESH, e -> {
             notify("%s+R: App-level reload triggered!".formatted(modifierName));
             markPassed(modifierName + "+R");
@@ -280,11 +280,11 @@ public class ShortcutKeysView extends AbstractThing {
 
     private static final List<ShortcutGroup> SHORTCUT_GROUPS = List.of(
             new ShortcutGroup("Protected — avoid these, unless using a PWA", List.of(
-                    new ShortcutInfo("%s+L", "Address bar", P, P, P, O, O),
+                    new ShortcutInfo("%s+L", "Address bar", O, P, P, O, O),
                     new ShortcutInfo("%s+M", "Minimize (Mac OS)", P, P, O, O, O),
                     new ShortcutInfo("%s+N", "New window", P, P, P, P, P),
                     new ShortcutInfo("%s+Q", "Quit (Mac)", P, P, P, O, O),
-                    new ShortcutInfo("%s+R", "Reload", P, P, O, O, O),
+                    new ShortcutInfo("%s+R", "Reload", O, P, O, O, O),
                     new ShortcutInfo("%s+T", "New tab", P, P, P, P, P),
                     new ShortcutInfo("%s+W", "Close tab", P, P, P, P, P)
             )),
