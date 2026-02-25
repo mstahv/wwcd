@@ -76,10 +76,10 @@ public class SpectatorModeIT {
             presenterMopo.waitForConnectionToSettle();
 
             // Both should be on LobbyView with intro content
-            assertThat(presenterPage.getByText("What We(b) can do in 2026")).isVisible();
+            assertThat(presenterPage.getByAltText("What We(b) Can Do!")).isVisible();
             assertThat(presenterPage.locator("vaadin-button:has-text('Vote')")).isVisible();
             waitForViewer(viewerPage, viewerMopo);
-            assertThat(viewerPage.getByText("What We(b) can do in 2026")).isVisible();
+            assertThat(viewerPage.getByAltText("What We(b) Can Do!")).isVisible();
             // Viewer must NOT see the admin-only Vote button
             assertThat(viewerPage.locator("vaadin-button:has-text('Vote')")).not().isVisible();
 

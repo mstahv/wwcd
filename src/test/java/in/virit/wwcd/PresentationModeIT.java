@@ -87,12 +87,12 @@ public class PresentationModeIT {
 
             // Presenter should be on LobbyView with Vote button
             assertThat(presenterPage.locator("vaadin-button:has-text('Vote')")).isVisible();
-            assertThat(presenterPage.getByText("What We(b) can do in 2026")).isVisible();
+            assertThat(presenterPage.getByAltText("What We(b) Can Do!")).isVisible();
 
             // Viewer should be automatically moved to LobbyView via server push/poll
             viewerPage.waitForTimeout(2000);
             viewerMopo.waitForConnectionToSettle();
-            assertThat(viewerPage.getByText("What We(b) can do in 2026")).isVisible();
+            assertThat(viewerPage.getByAltText("What We(b) Can Do!")).isVisible();
 
         } finally {
             viewerContext.close();
@@ -129,10 +129,10 @@ public class PresentationModeIT {
             presenterMopo.waitForConnectionToSettle();
 
             // Both should be on LobbyView with intro content
-            assertThat(presenterPage.getByText("What We(b) can do in 2026")).isVisible();
+            assertThat(presenterPage.getByAltText("What We(b) Can Do!")).isVisible();
             assertThat(presenterPage.locator("vaadin-button:has-text('Vote')")).isVisible();
             waitForViewer(viewerPage, viewerMopo);
-            assertThat(viewerPage.getByText("What We(b) can do in 2026")).isVisible();
+            assertThat(viewerPage.getByAltText("What We(b) Can Do!")).isVisible();
 
             // --- Vote → Voting phase ---
             presenterMopo.click("vaadin-button:has-text('Vote')");
@@ -172,7 +172,7 @@ public class PresentationModeIT {
             // Viewer should be moved to the same demo view
             waitForViewer(viewerPage, viewerMopo);
             // The demo view shows a GitHub source link in the navbar (added by AbstractThing)
-            assertThat(viewerPage.locator("a[href*='github.com']")).isVisible();
+            assertThat(viewerPage.locator("a[href*='github.com']").first()).isVisible();
 
             // --- Navigate back to agenda (forward button goes to agenda from a demo) ---
             Locator forwardButton = presenterPage.locator("vaadin-button:has(vaadin-icon[icon='vaadin:fast-forward'])");
@@ -187,7 +187,7 @@ public class PresentationModeIT {
 
             // Viewer should be moved to the second demo
             waitForViewer(viewerPage, viewerMopo);
-            assertThat(viewerPage.locator("a[href*='github.com']")).isVisible();
+            assertThat(viewerPage.locator("a[href*='github.com']").first()).isVisible();
 
             // --- Q&A phase ---
             // Click 5. Q&A in the presentation stages drawer
@@ -215,7 +215,7 @@ public class PresentationModeIT {
             viewerMopo.waitForConnectionToSettle();
 
             // The demo view shows a GitHub source link (from AbstractThing)
-            assertThat(viewerPage.locator("a[href*='github.com']")).isVisible();
+            assertThat(viewerPage.locator("a[href*='github.com']").first()).isVisible();
 
         } finally {
             viewerContext.close();

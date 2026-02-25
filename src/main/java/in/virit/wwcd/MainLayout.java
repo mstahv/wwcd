@@ -15,6 +15,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
+import java.util.concurrent.atomic.AtomicInteger;
 import in.virit.wwcd.demoviews.AbstractThing;
 import in.virit.wwcd.session.AdminSession;
 import in.virit.wwcd.session.AppContext;
@@ -35,7 +36,7 @@ import org.vaadin.firitin.util.style.VaadinCssProps;
 @UIScope
 public class MainLayout extends org.vaadin.firitin.appframework.MainLayout implements AfterNavigationObserver {
 
-    static int layoutCount = 1;
+    static AtomicInteger layoutCount = new AtomicInteger(1);
     public PresentationDisplay presentationDisplay = new PresentationDisplay();
     @Autowired
     AppContext appContext;
@@ -91,8 +92,8 @@ public class MainLayout extends org.vaadin.firitin.appframework.MainLayout imple
             getStyle().setDisplay(Style.Display.BLOCK);
             getStyle().setMarginLeft("auto");
             getStyle().setMarginRight("auto");
-            getStyle().setMarginTop("2em");
-            getStyle().setMarginBottom("1em");
+            //getStyle().setMarginTop("1em");
+            getStyle().setMarginBottom("2em");
             getStyle().setColor(AuraProps.PURPLE.var());
         }};
     }
@@ -140,7 +141,7 @@ public class MainLayout extends org.vaadin.firitin.appframework.MainLayout imple
 
     public int getLayoutId() {
         if (layoutId != 0) return layoutId;
-        this.layoutId = layoutCount++;
+        this.layoutId = layoutCount.getAndIncrement();
         return layoutId;
     }
 
@@ -219,6 +220,10 @@ public class MainLayout extends org.vaadin.firitin.appframework.MainLayout imple
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
-        attachEvent.getUI().setPollInterval(1000);
+        // Only the admin/presenter needs polling (for timer and presentation controls).
+        // Audience members are navigated via server push, no polling needed.
+        if (adminSession.isAdmin()) {
+            attachEvent.getUI().setPollInterval(1000);
+        }
     }
 }

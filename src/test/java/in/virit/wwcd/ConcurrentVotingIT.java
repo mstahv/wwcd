@@ -17,9 +17,10 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("e2e")
@@ -30,7 +31,7 @@ public class ConcurrentVotingIT {
     @LocalServerPort
     private int port;
 
-    private static final Random random = new Random();
+    private static final int VIEWER_COUNT = Integer.getInteger("viewer.count", 30);
 
     private static Playwright playwright;
     private static Browser browser;
@@ -40,7 +41,7 @@ public class ConcurrentVotingIT {
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
                 .setHeadless(true)
-                .setTimeout(30000));
+                .setTimeout(60000));
     }
 
     @AfterAll
@@ -59,97 +60,103 @@ public class ConcurrentVotingIT {
 
     @Test
     void testConcurrentVoting() throws Exception {
+        System.out.println("Starting concurrent voting test with " + VIEWER_COUNT + " viewers");
+
         BrowserContext presenterContext = browser.newContext();
         Page presenterPage = presenterContext.newPage();
         Mopo presenterMopo = new Mopo(presenterPage);
 
+        // Collect viewer contexts for cleanup
+        List<BrowserContext> viewerContexts = new ArrayList<>();
+
         try {
-            // Step 1: Presenter opens the application
+            // Step 1: Presenter enters presentation mode
             presenterPage.navigate(baseUrl());
             presenterPage.waitForLoadState(LoadState.NETWORKIDLE);
 
-            // Step 2: Click the present button (with play icon)
             presenterMopo.click("vaadin-button:has(vaadin-icon[icon='vaadin:play'])");
-
-            presenterPage.screenshot(new Page.ScreenshotOptions()
-                    .setPath(Paths.get("./target/screenshot-after-play-click.png")));
-
-            // Step 3: Type password into the dialog and submit
             presenterPage.keyboard().type("password");
             presenterPage.keyboard().press("Enter");
             presenterMopo.waitForConnectionToSettle();
 
+            // Step 2: Click Vote button to start voting phase
+            presenterPage.locator("vaadin-button:has-text('Vote')").click();
+            presenterPage.waitForTimeout(1000);
+
             presenterPage.screenshot(new Page.ScreenshotOptions()
-                    .setPath(Paths.get("./target/screenshot-after-password.png")));
+                    .setPath(Paths.get("./target/screenshot-voting-started.png")));
 
-            // Step 4: Click Begin button
-            presenterPage.locator("//vaadin-button[contains(text(),'Begin')]").click();
-            presenterPage.waitForTimeout(1000);
+            // Step 3: Open all viewer pages (sequentially — Playwright is single-threaded)
+            // The server still handles each session on separate Tomcat threads,
+            // so server-side concurrency is fully exercised.
+            record Viewer(BrowserContext context, Page page, Mopo mopo) {}
+            List<Viewer> viewers = new ArrayList<>();
 
-            // Step 5: Click Vote button
-            presenterPage.getByText("Vote").click();
-            presenterPage.waitForTimeout(1000);
-
-            // Step 6: One viewer votes
-            BrowserContext viewerContext = browser.newContext();
-            Page viewerPage = viewerContext.newPage();
-            try {
-                simulateViewer(viewerContext, viewerPage, 0);
-            } finally {
-                viewerContext.close();
+            for (int i = 0; i < VIEWER_COUNT; i++) {
+                BrowserContext ctx = browser.newContext();
+                viewerContexts.add(ctx);
+                Page page = ctx.newPage();
+                Mopo mopo = new Mopo(page);
+                page.navigate(baseUrl());
+                page.waitForLoadState();
+                viewers.add(new Viewer(ctx, page, mopo));
+                System.out.println("Viewer " + i + " connected");
             }
 
-            // Step 7: Presenter clicks "Close Voting" button
+            // Single batch wait for all viewers to settle on the voting view
+            Thread.sleep(3000);
+            // Verify first and last viewer have voting buttons available
+            viewers.getFirst().page().locator("vaadin-grid vaadin-button").first().waitFor();
+            viewers.getLast().page().locator("vaadin-grid vaadin-button").first().waitFor();
+            System.out.println("All viewers settled on voting view");
+
+            // Step 4: All viewers cast votes in round-robin fashion.
+            // Each viewer gets 10 votes. We cycle through viewers casting
+            // one vote each per round, creating interleaved load.
+            // No artificial delays — the click round-trip provides natural spacing.
+            int totalVotesCast = 0;
+            Random random = new Random(42);
+            int votesPerViewer = 10;
+            int buttonCount = Tagline.values().length;
+
+            long votingStart = System.currentTimeMillis();
+            for (int round = 0; round < votesPerViewer && round < buttonCount; round++) {
+                for (Viewer viewer : viewers) {
+                    Locator buttons = viewer.page().locator("vaadin-grid vaadin-button");
+                    int count = buttons.count();
+                    if (count > 0) {
+                        int idx = random.nextInt(count);
+                        buttons.nth(idx).click();
+                        totalVotesCast++;
+                    }
+                }
+                System.out.println("Round " + (round + 1) + "/" + votesPerViewer + " complete, " + totalVotesCast + " votes cast so far");
+            }
+            long votingDuration = System.currentTimeMillis() - votingStart;
+
+            // Brief settle time for last votes to reach server
+            Thread.sleep(2000);
+
+            System.out.println("Voting completed in " + votingDuration + "ms, " + totalVotesCast + " total votes from " + VIEWER_COUNT + " viewers");
+
+            // Step 5: Presenter closes voting
             presenterMopo.waitForConnectionToSettle();
             presenterPage.screenshot(new Page.ScreenshotOptions()
                     .setPath(Paths.get("./target/screenshot-presenter-before-close.png")));
             presenterPage.getByText("Close voting").click();
             presenterPage.waitForTimeout(2000);
 
-            // Step 8: Verify the view changes to Agenda view
+            // Step 6: Verify the Agenda view is displayed
+            presenterPage.screenshot(new Page.ScreenshotOptions()
+                    .setPath(Paths.get("./target/screenshot-presenter-agenda.png")));
             var agendaHeading = presenterPage.locator("h2:has-text('Agenda')");
             assertTrue(agendaHeading.isVisible(), "Agenda view should be displayed after closing voting");
 
         } finally {
+            for (BrowserContext ctx : viewerContexts) {
+                ctx.close();
+            }
             presenterContext.close();
         }
-    }
-
-    private void simulateViewer(BrowserContext viewerContext, Page viewerPage, int viewerId) {
-        Mopo mopo = new Mopo(viewerPage);
-
-        viewerPage.navigate(baseUrl());
-        viewerPage.waitForLoadState();
-        viewerPage.waitForTimeout(3000);
-        mopo.waitForConnectionToSettle();
-
-        viewerPage.screenshot(new Page.ScreenshotOptions()
-                .setPath(Paths.get("./target/screenshot-viewer" + viewerId + ".png")));
-
-        assertThat(viewerPage.getByText("Voting")).hasCount(2);
-
-        int buttonCount = Tagline.values().length;
-        if (buttonCount == 0) {
-            return;
-        }
-
-        // Cast 10 votes
-        for (int vote = 0; vote < 10 && vote < buttonCount; vote++) {
-            viewerPage.waitForTimeout(random.nextInt(300) + 100);
-
-            Locator buttons = viewerPage.locator("vaadin-grid vaadin-button");
-            int count = buttons.count();
-            if (count == 0) {
-                viewerPage.screenshot(new Page.ScreenshotOptions()
-                        .setPath(Paths.get("./target/screenshot-viewer" + viewerId + "-no-buttons.png")));
-                return;
-            }
-            int idx = random.nextInt(count);
-            mopo.click(buttons.nth(idx));
-        }
-
-        Mopo.waitForConnectionToSettle(viewerPage);
-        viewerPage.screenshot(new Page.ScreenshotOptions()
-                .setPath(Paths.get("./target/screenshot-viewer" + viewerId + "-end.png")));
     }
 }

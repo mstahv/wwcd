@@ -13,20 +13,26 @@ import in.virit.wwcd.views.LobbyView;
 import in.virit.wwcd.views.QAView;
 import in.virit.wwcd.views.VotingLeaderboardView;
 import in.virit.wwcd.views.VotingView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 
 import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SpringComponent
 public class AppContext {
+
+    private static final Logger log = LoggerFactory.getLogger(AppContext.class);
 
     private Class<? extends Component> currentView;
     private List<AgendaItem> agenda;
@@ -56,16 +62,19 @@ public class AppContext {
     }
 
     public void vote() {
+        log.info("Voting phase started");
         state = AppState.Voting;
-        voters = 0;
+        voters.set(0);
         for(Tagline t : Tagline.values()) {
-            taglinePointMap.put(t, 0);
+            taglinePointMap.get(t).set(0);
         }
         moveSessionsTo(VotingView.class);
         UI.getCurrent().navigate(VotingLeaderboardView.class);
     }
 
     public void closeVoting() {
+        int totalVotes = taglinePointMap.values().stream().mapToInt(AtomicInteger::get).sum();
+        log.info("Closing voting: {} voters, {} total votes cast", voters.get(), totalVotes);
         buildAgenda();
         state = AppState.Agenda;
         moveSessionsTo(AgendaView.class);
@@ -104,9 +113,9 @@ public class AppContext {
         Normal, Presentation, Voting, Agenda, Demos, QA
     }
 
-    private AppState state = AppState.Normal;
+    private volatile AppState state = AppState.Normal;
 
-    private Set<UISession> uiSessions = new HashSet<>();
+    private Set<UISession> uiSessions = new CopyOnWriteArraySet<>();
 
     public int sessionCount() {
         return uiSessions.size();
@@ -135,7 +144,7 @@ public class AppContext {
         state = AppState.Presentation;
         startofPresentation = Instant.now();
         this.spectatorMode = spectatorMode;
-        taglinePointMap.forEach((t, v) -> taglinePointMap.put(t, 0));
+        taglinePointMap.forEach((t, v) -> v.set(0));
         uiSessions.remove(uiSession);
         adminSession.setAdmin(true);
         moveSessionsTo(LobbyView.class);
@@ -151,34 +160,38 @@ public class AppContext {
     }
 
 
-    private Map<Tagline, Integer> taglinePointMap = new HashMap<>();
+    private Map<Tagline, AtomicInteger> taglinePointMap = new ConcurrentHashMap<>();
     {
         for(Tagline t : Tagline.values()) {
-            taglinePointMap.put(t, 0);
+            taglinePointMap.put(t, new AtomicInteger(0));
         }
     }
 
-    int voters = 0;
+    private final AtomicInteger voters = new AtomicInteger(0);
 
     public void registerVoter() {
-        voters++;
+        int count = voters.incrementAndGet();
+        log.info("Voter registered, total voters: {}", count);
     }
 
     public int getVoters() {
-        return voters;
+        return voters.get();
     }
 
     @EventListener
     public void votesChanged(VotesChanged votesChanged) {
         if(state == AppState.Voting) {
-            taglinePointMap.put(votesChanged.tagline(), taglinePointMap.getOrDefault(votesChanged.tagline(), 0) + votesChanged.votes());
+            int newCount = taglinePointMap.get(votesChanged.tagline()).addAndGet(votesChanged.votes());
+            log.info("Vote: {} {} (now {})", votesChanged.tagline(), votesChanged.votes() > 0 ? "+" + votesChanged.votes() : votesChanged.votes(), newCount);
         } else {
-            System.out.println("Ignoring votes change event, not in voting state");
+            log.warn("Ignoring votes change event, not in voting state");
         }
     }
 
     public Map<Tagline, Integer> calculatePoints() {
-        return Collections.unmodifiableMap(taglinePointMap);
+        Map<Tagline, Integer> snapshot = new HashMap<>();
+        taglinePointMap.forEach((t, v) -> snapshot.put(t, v.get()));
+        return Collections.unmodifiableMap(snapshot);
     }
 
     public boolean isSpectatorMode() {
@@ -201,7 +214,9 @@ public class AppContext {
         for(Demo d : Demo.values()) {
             demoPoints.put(d, 0);
         }
-        for(Map.Entry<Tagline, Integer> entry : taglinePointMap.entrySet()) {
+        // take a consistent snapshot of votes
+        Map<Tagline, Integer> pointSnapshot = calculatePoints();
+        for(Map.Entry<Tagline, Integer> entry : pointSnapshot.entrySet()) {
             Tagline t = entry.getKey();
             int points = entry.getValue();
             if(points > 0) {
