@@ -35,6 +35,8 @@ public enum Tagline {
     WebAuthn1("Authenticate with face or fingerprint recognition.", Demo.WebAuthn),
     WebAuthn2("Enforce strong authentication beyond weak passwords.", Demo.WebAuthn),
     WebAuthn3("Protect users with modern, secure authentication.", Demo.WebAuthn),
+    Shortcuts1("Define custom keyboard hotkeys for your web app.", Demo.ShortcutKeys),
+    Shortcuts2("Override browser shortcuts like Ctrl+P from your app.", Demo.ShortcutKeys),
     ;
 
     private String tagline;

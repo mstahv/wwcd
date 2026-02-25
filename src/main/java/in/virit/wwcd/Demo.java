@@ -23,6 +23,7 @@ public enum Demo {
     SelectionAPI(in.virit.wwcd.demoviews.SelectionAPIView.class),
     WebAuthn(in.virit.wwcd.demoviews.WebAuthnView.class),
     PWA(in.virit.wwcd.demoviews.InstallingView.class),
+    ShortcutKeys("Shortcut Keys", in.virit.wwcd.demoviews.ShortcutKeysView.class),
     ;
 
     private String name;
