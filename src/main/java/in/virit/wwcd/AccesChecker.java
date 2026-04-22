@@ -2,10 +2,12 @@ package in.virit.wwcd;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.Location;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import in.virit.wwcd.demoviews.AbstractThing;
+import in.virit.wwcd.demoviews.PrintOptimizedCard;
 import in.virit.wwcd.session.AdminSession;
 import in.virit.wwcd.session.AppContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,11 @@ public class AccesChecker implements VaadinServiceInitListener {
     }
 
     private void beforeEnter(BeforeEnterEvent event) {
+        Class<? extends Component> navigationTarget = event.getNavigationTarget();
+        Location location = event.getLocation();
+        if(event.getNavigationTarget() == PrintOptimizedCard.class) {
+            return;
+        }
         System.out.println("Before enter, mode" + appContext.getState());
         if(adminSession.isAdmin()) {
             System.out.println("Admin access to " + event.getNavigationTarget().getSimpleName());

@@ -16,6 +16,8 @@ import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.vaadin.flow.theme.aura.Aura;
 import in.virit.wwcd.demoviews.AbstractThing;
 import in.virit.wwcd.session.AdminSession;
 import in.virit.wwcd.session.AppContext;
@@ -31,6 +33,7 @@ import org.vaadin.firitin.util.fullscreen.FullScreen;
 import org.vaadin.firitin.util.style.AuraProps;
 import org.vaadin.firitin.util.style.VaadinCssProps;
 
+@StyleSheet(Aura.STYLESHEET)
 @StyleSheet("main.css")
 @SpringComponent
 @UIScope
