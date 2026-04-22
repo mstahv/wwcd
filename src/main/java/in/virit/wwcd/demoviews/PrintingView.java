@@ -3,6 +3,7 @@ package in.virit.wwcd.demoviews;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Emphasis;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
 public class PrintingView extends AbstractThing {
 
     public PrintingView(RemotePrinterService remotePrinterService) {
+        add(new H1("Tricks for printing from single-page web apps"));
 
         String bodyText = """
                 Three typical approaches: tune the live DOM with a `@media print` stylesheet,
