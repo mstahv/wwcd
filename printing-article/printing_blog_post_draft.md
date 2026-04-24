@@ -65,6 +65,27 @@ where to poke it:
 }
 ```
 
+If you take the CSS media query route, you'll probably want a helper class for
+components that shouldn't end up on paper. My demo uses `.noprint` (see the first
+rule in the block above), applied for example to the "Print" button itself —
+which doesn't help anyone on paper 😁:
+
+```java
+        add(new Button("Print") {{
+            // See css rule below, ignore when printing using media query
+            addClassName("noprint");
+
+            getElement().executeJs("""
+                        // opens print the OS print dialog
+                        this.onclick = () => window.print();
+```
+
+Media queries can even target specific paper sizes, but resist the urge. A single layout
+that survives A4, Letter and the occasional label printer beats a fork per format. Rules
+can quickly become more difficult than your whole UI code.
+
+## 1.b Print and use JS hook for preparations
+
 With the Aura theme there's one extra quirk: the left padding is set via a CSS
 custom property with an animated transition, and Chromium captures the pre-transition
 value before the `@media print` rules kick in. Overriding it purely from CSS turned
@@ -84,26 +105,7 @@ window.addEventListener("afterprint", () => {
 ```
 
 The above is not needed with the good old Lumo theme. File under "things you discover 
-only when someone prints the page for real."
-
-If you take the CSS media query route, you'll probably want a helper class for
-components that shouldn't end up on paper. My demo uses `.noprint` (see the first
-rule in the block above), applied for example to the "Print" button itself —
-which doesn't help anyone on paper 😁:
-
-```java
-        add(new Button("Print") {{
-            // See css rule below, ignore when printing using media query
-            addClassName("noprint");
-
-            getElement().executeJs("""
-                        // opens print the OS print dialog
-                        this.onclick = () => window.print();
-```
-
-Media queries can even target specific paper sizes, but resist the urge. A single layout
-that survives A4, Letter and the occasional label printer beats a fork per format. Rules
-can quickly become more difficult than your whole UI code.
+only when someone prints the page for real." Events can be handy especially if you want to slightly modify also the DOM before printing it. For Java developers, tricks below suit better in most cases though.
 
 ## 2. Construct a print-optimized page
 
