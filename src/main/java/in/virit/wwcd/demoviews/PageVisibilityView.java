@@ -13,10 +13,10 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.shared.Registration;
+import com.vaadin.flow.component.page.PageVisibility;
+import com.vaadin.flow.signals.Signal;
 import org.vaadin.firitin.appframework.MainLayout;
 import org.vaadin.firitin.appframework.MenuItem;
-import org.vaadin.firitin.util.PageVisibility;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -29,9 +29,8 @@ import java.util.concurrent.ScheduledFuture;
 public class PageVisibilityView extends AbstractThing {
 
     private final ScheduledFuture<?> future;
-    private final Registration registration;
     static ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-    private PageVisibility.Visibility visibility;
+    private PageVisibility visibility;
     private boolean notificationsEnabled;
 
     public PageVisibilityView() {
@@ -60,13 +59,11 @@ public class PageVisibilityView extends AbstractThing {
 
         Log log = new Log();
 
-        // In some cases detecting the state once is enough
-        PageVisibility.get().isVisible().thenAccept(v -> {
-            visibility = v;
-        });
-
-        // Maintain the visibility state and reacting to changes via listener
-        registration = PageVisibility.get().addVisibilityChangeListener(v -> {
+        // Maintain the visibility state and react to changes via a signal effect.
+        // The effect is bound to this component and cleaned up automatically on detach.
+        Signal<PageVisibility> visibilitySignal = UI.getCurrent().getPage().pageVisibilitySignal();
+        Signal.effect(this, () -> {
+            PageVisibility v = visibilitySignal.get();
             visibility = v;
             String text = "Page visibility changed: " + v;
             // always log it
@@ -75,7 +72,7 @@ public class PageVisibilityView extends AbstractThing {
             // Optionally show a notification about it
             if (notificationsEnabled) {
 
-                if (v == PageVisibility.Visibility.VISIBLE) {
+                if (v == PageVisibility.VISIBLE) {
                     // By default, defaults are fine, the notification is shown at bottom left and will disappear soonish
                     Notification.show(text);
                 } else {
@@ -100,7 +97,7 @@ public class PageVisibilityView extends AbstractThing {
         UI ui = UI.getCurrent();
         future = executorService.scheduleWithFixedDelay(() -> {
             ui.access(() -> {
-                if (visibility == PageVisibility.Visibility.VISIBLE) {
+                if (visibility == PageVisibility.VISIBLE) {
                     // Only do this if the page is visible and focused
                     log.log("periodic background task, UI visibility: " + visibility);
                 } else {
@@ -118,7 +115,6 @@ public class PageVisibilityView extends AbstractThing {
     @Override
     protected void onDetach(DetachEvent detachEvent) {
         super.onDetach(detachEvent);
-        registration.remove();
         future.cancel(true);
     }
 
