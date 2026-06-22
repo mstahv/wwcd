@@ -18,8 +18,9 @@ import org.vaadin.addons.maplibre.components.TrackerMarker;
 import org.vaadin.firitin.appframework.MenuItem;
 import org.vaadin.firitin.components.button.VButton;
 import org.vaadin.firitin.components.html.VParagaph;
-import org.vaadin.firitin.geolocation.Geolocation;
-import org.vaadin.firitin.geolocation.GeolocationCoordinates;
+import com.vaadin.flow.component.geolocation.Geolocation;
+import com.vaadin.flow.component.geolocation.GeolocationCoordinates;
+import com.vaadin.flow.component.geolocation.GeolocationWatcher;
 import org.vaadin.firitin.layouts.HorizontalFloatLayout;
 import org.vaadin.firitin.rad.PrettyPrinter;
 import org.vaadin.firitin.util.style.AuraProps;
@@ -31,7 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class GeolocationView extends AbstractThing {
 
     private final MapLibre map;
-    private Geolocation geolocation;
+    private GeolocationWatcher watcher;
     private TrackerMarker trackerMarker;
     GeoDataDisplay rawDataDisplay = new GeoDataDisplay();
 
@@ -55,24 +56,26 @@ public class GeolocationView extends AbstractThing {
     }
 
     private void enableGeolocation() {
-        if(geolocation != null) {
-            geolocation.cancel();
-            geolocation = null;
+        if(watcher != null) {
+            watcher.stop();
+            watcher = null;
             Notification.show("Geolocation tracking disabled");
             return;
         }
 
         AtomicBoolean firstPosition = new AtomicBoolean(true);
 
-        this.geolocation = Geolocation.watchPosition(position -> {
-            var geolocationData = position.getCoords();
-            trackerMarker.addPoint(geolocationData.getLongitude(), geolocationData.getLatitude());
+        // watchPosition is bound to this component and stops automatically on detach
+        this.watcher = Geolocation.watchPosition(this);
+        watcher.addPositionListener(position -> {
+            var geolocationData = position.coords();
+            trackerMarker.addPoint(geolocationData.longitude(), geolocationData.latitude());
             if(firstPosition.getAndSet(false)) {
                 map.flyTo(trackerMarker.getMarker().getGeometry(), 15);
             }
             rawDataDisplay.setData(geolocationData);
         }, error -> {
-            Notification.show("Geolocation error: " + error.getErrorMessage());
+            Notification.show("Geolocation error: " + error.debugInfo());
         });
         Notification.show("Geolocation tracking requested!");
     }
@@ -81,13 +84,13 @@ public class GeolocationView extends AbstractThing {
 
         public void setData(GeolocationCoordinates data) {
             removeAll();
-            addData("Longitude", data.getLongitude());
-            addData("Latitude", data.getLatitude());
-            addData("Altitude", data.getAltitude());
-            addData("Heading", data.getHeading());
-            addData("Speed", data.getSpeed());
-            addData("Accuracy (meters)", data.getAccuracy());
-            addData("Altitude accuracy", data.getAltitudeAccuracy());
+            addData("Longitude", data.longitude());
+            addData("Latitude", data.latitude());
+            addData("Altitude", data.altitude());
+            addData("Heading", data.heading());
+            addData("Speed", data.speed());
+            addData("Accuracy (meters)", data.accuracy());
+            addData("Altitude accuracy", data.altitudeAccuracy());
         }
 
         private void addData(String header, Double value) {
