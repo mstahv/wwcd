@@ -2,12 +2,14 @@ package in.virit.wwcd.demoviews;
 
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.fullscreen.Fullscreen;
+import com.vaadin.flow.component.fullscreen.FullscreenState;
+import com.vaadin.flow.signals.Signal;
 import org.vaadin.firitin.appframework.MainLayout;
 import org.vaadin.firitin.appframework.MenuItem;
-import org.vaadin.firitin.util.VStyle;
 import org.vaadin.firitin.util.VStyleUtil;
-import org.vaadin.firitin.util.fullscreen.FullScreen;
 
 @MenuItem(title = "Fullscreen API", icon = VaadinIcon.EXPAND_FULL)
 @Route(layout = MainLayout.class)
@@ -35,6 +37,8 @@ public class FullscreenView extends AbstractThing {
 
     public class FullscreenImage extends Image {
 
+        private boolean firstSignal = true;
+
         public FullscreenImage(String imageUrl) {
             super(imageUrl, "A nice view");
             addClassName("fullscreen-image");
@@ -54,19 +58,33 @@ public class FullscreenView extends AbstractThing {
                 }
             
             """);
-            addClickListener(e -> {
-                FullScreen.isFullscreen().thenAccept(fullscreen -> {
-                    if (fullscreen) {
-                        FullScreen.exitFullscreen();
-                        setWidth(null);
-                        setMaxWidth("300px");
+            // Pre-arm the request on the click trigger so it runs inside the click's own
+            // user-gesture window; doing it in an addClickListener would be too late and rejected.
+            Fullscreen.onClick(this).enter(this);
 
-                    } else {
-                        FullScreen.requestFullscreen(this);
-                        setMaxWidth(null);
-                        setWidthFull();
-                    }
-                });
+            // Click again while fullscreen to exit (the old toggle behaviour). exit() needs no
+            // gesture, so a server-side listener works. The pre-armed enter still fires on this
+            // click too, but re-requesting on the already-fullscreen element is a harmless no-op.
+            addClickListener(e -> {
+                if (Fullscreen.stateSignal().peek() == FullscreenState.FULLSCREEN) {
+                    Fullscreen.exit();
+                }
+            });
+
+            // React to state changes on the server. We just show notifications, but this is
+            // where an app could pause a video, lock orientation, etc. The effect also fires on
+            // Esc-exit, and once on registration — firstSignal tells that initial run apart from
+            // a real exit.
+            Signal<FullscreenState> state = Fullscreen.stateSignal();
+            Signal.effect(this, () -> {
+                switch (state.get()) {
+                    case FULLSCREEN -> Notification.show("Entered fullscreen — click the photo or press Esc to exit");
+                    case NOT_FULLSCREEN -> Notification.show(
+                            firstSignal ? "Fullscreen mode is not active" : "Exited fullscreen.");
+                    case UNSUPPORTED -> Notification.show("Unsupported fullscreen state.");
+                    case UNKNOWN -> Notification.show("Unknown fullscreen state.");
+                }
+                firstSignal = false;
             });
         }
 
