@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
+        <version>4.1.0</version>
     </parent>
 
     <groupId>in.virit</groupId>
@@ -19,7 +19,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.4</surefire-plugin.version>
-        <vaadin.version>25.1.3</vaadin.version>
+        <vaadin.version>25.2.0-rc1</vaadin.version>
     </properties>
 
     <profiles>
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>in.virit</groupId>
             <artifactId>viritin</artifactId>
-            <version>3.4.1</version>
+            <version>3.6.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>in.virit</groupId>
