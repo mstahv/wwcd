@@ -43,7 +43,8 @@ public class PageVisibilityView extends AbstractThing {
                 All modern browsers
                 support [Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API), but I have found out that sometimes one is better off by also tracking
                 if the page has focus in it (an open browser window reports visible, but can be behind another one).
-                PageVisibility helper class in Viritin add-on combines these into a single API.
+                Since Vaadin 25.2, `Page.pageVisibilitySignal()` exposes this as a signal that distinguishes VISIBLE,
+                VISIBLE_NOT_FOCUSED and HIDDEN. Before that, the PageVisibility helper in the Viritin add-on combined these into a single API.
 
                 Below, the log is updated every second, but only if the page is visible. Also, when the page visibility
                 changes. If notifications are enabled, a notification is shown when the visibility changes.

@@ -30,8 +30,10 @@ public class ScreenOrientationView extends AbstractThing {
                 * Workarounds for locking on Apple devices: CSS rotate against media queries (mediocre results), hint the user
                   about optimal orientation: *This video is horizontal, please rotate your screen...*
 
-                This demo reports the size and small visualization of the view using ResizeObserver. I find this the most flexible approach as it can observe any visible element
-                size (not just screen or window size). Used via helper in Viritin add-on.
+                This demo reports the orientation using the native Screen Orientation API built into Vaadin 25.2
+                (`com.vaadin.flow.component.screenorientation.ScreenOrientation`). The size box is still drawn using
+                ResizeObserver from the Viritin add-on — I find it the most flexible approach as it can observe any visible
+                element's size (not just the screen or window), and there is no built-in framework equivalent for that yet.
                 """));
 
                 Div sizeReport = new VDiv(){{

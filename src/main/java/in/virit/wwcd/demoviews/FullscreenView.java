@@ -23,9 +23,10 @@ public class FullscreenView extends AbstractThing {
                 but on desktop it works well across browsers. On mobile apps, if fullscreen is desired, consider
                 using the PWA mode, which launches the app in a standalone window without the browser "chrome".
 
-                 * The JS API is "trivial", but "interesting things" can happen with SPAs like Vaadin. For Vaadin,
-                   you can try for example the [Viritin add-on](https://vaadin.com/directory/component/flow-viritin),
-                   which provides a simple Java API for the Fullscreen browser API and a couple of workarounds for the "surprises".
+                 * The JS API is "trivial", but "interesting things" can happen with SPAs like Vaadin. Since Vaadin 25.2
+                   there is a built-in Java API for the Fullscreen browser API (`com.vaadin.flow.component.fullscreen.Fullscreen`),
+                   which also smooths over the "surprises". Before that, the [Viritin add-on](https://vaadin.com/directory/component/flow-viritin)
+                   provided a similar helper.
                  * Test this app's fullscreen mode by clicking the button in the menu.
                  * Or click/tap the photo below (makes the photo fullscreen). Note, iPhones don't support fullscreen!
                 """));

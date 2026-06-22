@@ -29,7 +29,7 @@ public class PreventAutomaticScreenLockView extends AbstractThing {
                 To achieve this, we can use the [Screen Wake Lock API](https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API), which allows web applications to request a wake 
                 lock to keep the screen on. This is supported by most modern browsers.
                 
-                The example builds on Java API available in Viritin add-on: request wake lock and start counting seconds (check sleep timeout from your device settings).
+                The example builds on the Java API built into Vaadin 25.2 (`com.vaadin.flow.component.wakelock.WakeLock`): request a wake lock and start counting seconds (check sleep timeout from your device settings). Before 25.2 the Viritin add-on offered a similar helper.
                 """));
 
         Div wakeLockStatus = new Div("Wake lock status: unknown");
