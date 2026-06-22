@@ -37,6 +37,7 @@ public class PreventAutomaticScreenLockView extends AbstractThing {
         // activeSignal() reflects the live state: it flips back to false automatically
         // when the browser releases the lock (e.g. the document became inactive).
         Signal<Boolean> active = WakeLock.activeSignal();
+        // TODO check if there is an easier way to do this than to learn Signal tricks
         Signal.effect(this, () -> wakeLockStatus.setText("Wake lock active: " + active.get()));
 
         add(new Button("Request wake lock and reset timer", event -> {
