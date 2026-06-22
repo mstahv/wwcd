@@ -7,9 +7,10 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.wakelock.WakeLock;
+import com.vaadin.flow.signals.Signal;
 import org.vaadin.firitin.appframework.MainLayout;
 import org.vaadin.firitin.appframework.MenuItem;
-import org.vaadin.firitin.util.ScreenWakeLock;
 
 import java.time.Instant;
 
@@ -33,19 +34,14 @@ public class PreventAutomaticScreenLockView extends AbstractThing {
 
         Div wakeLockStatus = new Div("Wake lock status: unknown");
 
-        ScreenWakeLock.checkState().thenAccept(state -> {
-            wakeLockStatus.setText("Wake lock status: " + state);
-        });
+        // activeSignal() reflects the live state: it flips back to false automatically
+        // when the browser releases the lock (e.g. the document became inactive).
+        Signal<Boolean> active = WakeLock.activeSignal();
+        Signal.effect(this, () -> wakeLockStatus.setText("Wake lock active: " + active.get()));
 
         add(new Button("Request wake lock and reset timer", event -> {
             timerWidget.resetTimer();
-            ScreenWakeLock.request(() -> {
-                // optional listener called when wake lock is released
-                wakeLockStatus.setText("Wake lock was released (listener). Probably because the document became inactive for a while.");
-                // Note, in a real app, you might want to reacquire the wake lock with PageVisibility API
-            }).thenAccept(state -> {
-                wakeLockStatus.setText("Wake lock status: " + state);
-            });
+            WakeLock.request(error -> wakeLockStatus.setText("Wake lock request failed: " + error.message()));
         }));
 
         add(new Button("Reset timer", event -> {
