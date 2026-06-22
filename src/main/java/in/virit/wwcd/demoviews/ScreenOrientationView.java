@@ -6,6 +6,9 @@ import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.Route;
 import in.virit.color.Color;
 import in.virit.color.NamedColor;
+import com.vaadin.flow.component.screenorientation.ScreenOrientation;
+import com.vaadin.flow.component.screenorientation.ScreenOrientationData;
+import com.vaadin.flow.signals.Signal;
 import org.vaadin.firitin.appframework.MainLayout;
 import org.vaadin.firitin.appframework.MenuItem;
 import org.vaadin.firitin.components.html.VDiv;
@@ -44,17 +47,16 @@ public class ScreenOrientationView extends AbstractThing {
                 add(sizeReport);
 
 
-                ResizeObserver.get().observe(ScreenOrientationView.this, size -> {
-                    String orientation;
-                    if(size.width() == size.height()) {
-                        orientation = "square";
-                    } else if(size.width() > size.height()) {
-                        orientation = "horizontal";
-                    } else {
-                        orientation = "vertical";
-                    }
+                // Orientation now comes from the native Screen Orientation API instead of
+                // being guessed from width/height. ResizeObserver still drives the size
+                // visualization, as there is no public framework equivalent for observing
+                // an arbitrary element's size.
+                Signal<ScreenOrientationData> orientation = ScreenOrientation.orientationSignal();
 
-                    sizeReport.setText("%s W: %s H: %S".formatted(orientation, size.width(), size.height()));
+                ResizeObserver.get().observe(ScreenOrientationView.this, size -> {
+                    ScreenOrientationData o = orientation.peek();
+
+                    sizeReport.setText("%s (%d°) W: %s H: %s".formatted(o.type(), o.angle(), size.width(), size.height()));
 
                     sizeReport.setWidth( (size.width())/3 + "px");
                     sizeReport.setHeight( (size.height())/3 + "px");
