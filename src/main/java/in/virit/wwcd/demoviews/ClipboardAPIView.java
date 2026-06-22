@@ -1,5 +1,7 @@
 package in.virit.wwcd.demoviews;
 
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.clipboard.Clipboard;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -8,9 +10,8 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.Route;
 import org.vaadin.firitin.appframework.MainLayout;
 import org.vaadin.firitin.appframework.MenuItem;
+import org.vaadin.firitin.components.notification.VNotification;
 import org.vaadin.firitin.components.textfield.VTextArea;
-import org.vaadin.firitin.util.clipboard.CopyToClipboardButton;
-import org.vaadin.firitin.util.clipboard.ReadFromClipboardButton;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -28,10 +29,15 @@ public class ClipboardAPIView extends AbstractThing {
                 differences, but basic operations are achievable with modern browsers.
                 """));
 
-        add(new CopyToClipboardButton(() -> "Text content generated at " + LocalTime.now()){{
-            setText("Copy generated text to clipboard");
-            addClickListener(e -> Notification.show("Copied text to your clipboard, try pasting it somewhere"));
-        }});
+        Button copyButton = new Button("Copy generated text to clipboard");
+        Clipboard.onClick(copyButton)
+                .writeText("Text content generated at " + LocalTime.now(),
+                        writtenString -> {
+                            Notification.show("Copied text to your clipboard, try pasting it somewhere");
+                        }, error -> {
+                            VNotification.prominent("Error copying text to your clipboard, please try again");
+                        });
+        add(copyButton);
 
 
         TextArea textArea = new VTextArea("Just a text area to test copy/paste") {{
@@ -39,9 +45,10 @@ public class ClipboardAPIView extends AbstractThing {
             setHeight("100px");
         }};
 
-        add(new ReadFromClipboardButton(string -> {
+        Button pasteButton = new Button("Handle clipboard value");
+        Clipboard.onClick(pasteButton).readText(string -> {
             textArea.setValue(string);
-            if(string.contains(";") && string.contains("\n")) {
+            if (string.contains(";") && string.contains("\n")) {
                 // treat as CSV, show as table;
                 List<List<String>> cells = new ArrayList<>();
                 String[] lines = string.split("\n");
@@ -49,7 +56,7 @@ public class ClipboardAPIView extends AbstractThing {
                     String[] split = l.split(";");
                     cells.add(Arrays.asList(split));
                 }
-                var grid = new Grid<List<String>>(){{
+                var grid = new Grid<List<String>>() {{
                     int cols = cells.get(0).size();
                     for (int i = 0; i < cols; i++) {
                         int finalI = i;
@@ -59,13 +66,8 @@ public class ClipboardAPIView extends AbstractThing {
                 }};
                 add(grid);
             }
-        }) {{
-            setText("Handle clipboard value");
-            addClickListener(event -> {
-                Notification.show("Your clipboard value was requested and copied to the text area above. Browser " +
-                        "might have requested a permission or showed a native menu with 'Paste' option.");
-            });
-        }});
+        }, error -> VNotification.prominent("Error reading clipboard, please try again"));
+        add(pasteButton);
         add(new Paragraph("The button above reads clipboard value as text and copy it to the text area above (and show as table if it looks like CSV)."));
 
         add(textArea);
